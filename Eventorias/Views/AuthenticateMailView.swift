@@ -10,6 +10,11 @@ import SwiftUI
 struct AuthenticateMailView: View {
     @ObservedObject var authVM: AuthenticationViewModel
     @EnvironmentObject var coordinator: AppCoordinator
+    
+    var shouldDisable: Bool {
+        authVM.email.isEmpty || authVM.password.isEmpty
+    }
+    
     var body: some View {
         VStack {
             Spacer()
@@ -47,10 +52,11 @@ struct AuthenticateMailView: View {
                 .frame(width: 242)
                 .background {
                     RoundedRectangle(cornerRadius: 4)
-                        .fill(.red)
+                        .fill(shouldDisable ? .red.opacity(0.6) : .red)
                 }
             }
             .padding(.top)
+            .disabled(shouldDisable)
             Button {
                 coordinator.goToRegister()
             } label: {
@@ -68,6 +74,14 @@ struct AuthenticateMailView: View {
             Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .overlay(alignment: .bottom, content: {
+            if let error = authVM.error {
+                Text(error)
+                    .frame(maxWidth: .infinity)
+                    .background(.red)
+                    .foregroundStyle(.white)
+            }
+        })
         .background {
             Color("background")
                 .ignoresSafeArea()

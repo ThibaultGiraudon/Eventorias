@@ -11,6 +11,10 @@ struct RegisterView: View {
     @ObservedObject var authVM: AuthenticationViewModel
     @EnvironmentObject var coordinator: AppCoordinator
     
+    var shouldDisable: Bool {
+        authVM.email.isEmpty || authVM.password.isEmpty || authVM.fullname.count < 4
+    }
+    
     var body: some View {
         VStack {
             Spacer()
@@ -49,19 +53,28 @@ struct RegisterView: View {
                 }
             } label: {
                 Text("Create an account")
-                .foregroundStyle(.red)
+                .foregroundStyle(shouldDisable ? .gray : .red)
                 .padding(10)
                 .frame(width: 242)
                 .background {
                     RoundedRectangle(cornerRadius: 4)
                         .stroke(lineWidth: 2)
-                        .fill(.red)
+                        .fill(shouldDisable ? .gray : .red)
                 }
             }
+            .disabled(shouldDisable)
             Spacer()
             Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .overlay(alignment: .bottom, content: {
+            if let error = authVM.error {
+                Text(error)
+                    .frame(maxWidth: .infinity)
+                    .background(.red)
+                    .foregroundStyle(.white)
+            }
+        })
         .background {
             Color("background")
                 .ignoresSafeArea()

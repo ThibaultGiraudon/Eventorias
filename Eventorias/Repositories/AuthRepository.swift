@@ -28,4 +28,29 @@ class AuthRepository {
             completion(error)
         }
     }
+    
+    func identifyError(_ error: Error) -> String {
+        if let errCode = AuthErrorCode(rawValue: (error as NSError).code) {
+                switch errCode {
+                case .networkError:
+                    return "Problème de connexion internet."
+                case .userNotFound:
+                    return "Aucun compte ne correspond à cet email."
+                case .wrongPassword, .invalidCredential:
+                    return "Mot de passe incorrect."
+                case .emailAlreadyInUse:
+                    return "Cet email est déjà utilisé."
+                case .invalidEmail:
+                    return "Format d'email invalide."
+                case .weakPassword:
+                    return "Mot de passe trop faible (6 caractères min.)."
+                case .tooManyRequests:
+                    return "Trop de tentatives. Réessayez plus tard."
+                default:
+                    return "Une erreur est survenue : \(errCode.rawValue)"
+                }
+            }
+
+            return "Erreur inconnue : \(error.localizedDescription)"
+    }
 }

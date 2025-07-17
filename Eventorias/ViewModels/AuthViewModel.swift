@@ -12,6 +12,7 @@ class AuthenticationViewModel: ObservableObject {
     @Published var email = ""
     @Published var password = ""
     @Published var fullname = ""
+    @Published var error: String?
 
     private let authService: AuthRepository
     private let userRepository: UserRepository
@@ -29,6 +30,7 @@ class AuthenticationViewModel: ObservableObject {
         authService.authenticate(email: email, password: password) { result, error in
             if let error = error {
                 print("Sign in error: \(error)")
+                self.error = self.authService.identifyError(error)
                 return
             }
 
@@ -45,6 +47,7 @@ class AuthenticationViewModel: ObservableObject {
         authService.register(email: email, password: password) { result, error in
             if let error = error {
                 print("Register error: \(error)")
+                self.error = self.authService.identifyError(error)
                 return
             }
 
@@ -70,6 +73,7 @@ class AuthenticationViewModel: ObservableObject {
         authService.signOut { error in
             if let error = error {
                 print("Sign out error: \(error)")
+                self.error = error.localizedDescription
                 return
             }
             self.session.logout()
