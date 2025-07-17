@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct AuthenticateView: View {
-    @EnvironmentObject var authViewModel: AuthViewModel
     @EnvironmentObject var coordinator: AppCoordinator
     var body: some View {
         VStack {
@@ -43,9 +42,7 @@ struct AuthenticateView: View {
 }
 
 #Preview {
-    @Previewable @StateObject var authViewModel = AuthViewModel()
     @Previewable @StateObject var coordinator = AppCoordinator()
     AuthenticateView()
-        .environmentObject(authViewModel)
         .environmentObject(coordinator)
 }

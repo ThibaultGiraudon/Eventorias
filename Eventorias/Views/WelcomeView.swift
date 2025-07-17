@@ -6,37 +6,48 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 struct WelcomeView: View {
-    @EnvironmentObject var authViewModel: AuthViewModel
+    @ObservedObject var session: UserSessionViewModel
+    @ObservedObject var authVM: AuthenticationViewModel
+
     var body: some View {
         VStack {
-            if let url = URL(string: authViewModel.user.imageURL) {
-                AsyncImage(url: url) { image in
-                    image.resizable()
-                        .frame(width: 100, height: 100)
-                        .clipShape(Circle())
-                } placeholder: {
-                    ProgressView()
+            if session.isLoading {
+                ProgressView("Loading user...")
+            } else if let user = session.currentUser {
+                KFImage(URL(string: user.imageURL))
+                    .resizable()
+                    .placeholder {
+                        ProgressView()
+                    }
+                    .frame(width: 100, height: 100)
+                    .clipShape(Circle())
+
+                Text("Welcome \(user.fullname)")
+
+                Button("Log out") {
+                    authVM.signOut()
                 }
                 .padding()
-                Text("Welcome \(authViewModel.user.fullname)")
-                    .toolbar {
-                        ToolbarItem(placement: .topBarTrailing) {
-                            Button("Log out") {
-                                authViewModel.signOut()
-                            }
-                        }
-                    }
             } else {
-                Text("CPT")
+                Text("Not logged in")
             }
         }
     }
 }
 
 #Preview {
-    @Previewable @StateObject var authViewModel = AuthViewModel()
-    WelcomeView()
-        .environmentObject(authViewModel)
+    let session = UserSessionViewModel()
+    session.currentUser = User(
+        uid: "123",
+        email: "test@test.com",
+        fullname: "Jane Test",
+        imageURL: "https://firebasestorage.googleapis.com/v0/b/eventorias-df464.firebasestorage.app/o/profils_image%2Fdefault-profile-image.jpg?alt=media&token=c9a78295-2ad4-4acf-872d-c193116783c5"
+    )
+    session.isLoggedIn = true
+
+    let auth = AuthenticationViewModel(session: session)
+    return WelcomeView(session: session, authVM: auth)
 }

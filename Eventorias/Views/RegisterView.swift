@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct RegisterView: View {
-    @EnvironmentObject var authViewModel: AuthViewModel
+    @ObservedObject var authVM: AuthenticationViewModel
     @EnvironmentObject var coordinator: AppCoordinator
     
     var body: some View {
@@ -18,7 +18,7 @@ struct RegisterView: View {
             Image("title")
             .padding(.bottom, 64)
             Group {
-                TextField(text: $authViewModel.email) {
+                TextField(text: $authVM.email) {
                     Text("Email")
                         .foregroundStyle(.white.opacity(0.5))
                 }
@@ -26,13 +26,14 @@ struct RegisterView: View {
                 .background(Color("CustomGray"))
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(.never)
-                TextField(text: $authViewModel.fullname) {
+                .keyboardType(.emailAddress)
+                TextField(text: $authVM.fullname) {
                     Text("Fullname")
                         .foregroundStyle(.white.opacity(0.5))
                 }
                 .padding(10)
                 .background(Color("CustomGray"))
-                SecureField(text: $authViewModel.password) {
+                SecureField(text: $authVM.password) {
                     Text("Password")
                         .foregroundStyle(.white.opacity(0.5))
                 }
@@ -43,7 +44,7 @@ struct RegisterView: View {
             .padding(.horizontal)
             .foregroundStyle(.white)
             Button {
-                authViewModel.register {
+                authVM.register {
                     coordinator.resetNavigation()
                 }
             } label: {
@@ -69,9 +70,15 @@ struct RegisterView: View {
 }
 
 #Preview {
-    @Previewable @StateObject var authViewModel = AuthViewModel()
-    @Previewable @StateObject var coordinator = AppCoordinator()
-    RegisterView()
-        .environmentObject(authViewModel)
-        .environmentObject(coordinator)
+    let session = UserSessionViewModel()
+    session.currentUser = User(
+        uid: "123",
+        email: "test@test.com",
+        fullname: "Jane Test",
+        imageURL: "https://firebasestorage.googleapis.com/v0/b/eventorias-df464.firebasestorage.app/o/profils_image%2Fdefault-profile-image.jpg?alt=media&token=c9a78295-2ad4-4acf-872d-c193116783c5"
+    )
+    session.isLoggedIn = true
+
+    let auth = AuthenticationViewModel(session: session)
+    return RegisterView(authVM: auth)
 }

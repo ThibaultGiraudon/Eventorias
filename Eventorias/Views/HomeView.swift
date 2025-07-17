@@ -8,11 +8,12 @@
 import SwiftUI
 
 struct HomeView: View {
-    @EnvironmentObject var authViewModel: AuthViewModel
+    @ObservedObject var session: UserSessionViewModel
+    @ObservedObject var authVM: AuthenticationViewModel
     var body: some View {
         VStack {
-            if authViewModel.isLoggedIn {
-                WelcomeView()
+            if session.isLoggedIn {
+                WelcomeView(session: session, authVM: authVM)
             } else {
                 AuthenticateView()
             }
@@ -21,9 +22,15 @@ struct HomeView: View {
 }
 
 #Preview {
-    @Previewable @StateObject var authViewModel = AuthViewModel()
-    NavigationStack {
-        HomeView()
-            .environmentObject(authViewModel)
-    }
+    let session = UserSessionViewModel()
+    session.currentUser = User(
+        uid: "123",
+        email: "test@test.com",
+        fullname: "Jane Test",
+        imageURL: "https://firebasestorage.googleapis.com/v0/b/eventorias-df464.firebasestorage.app/o/profils_image%2Fdefault-profile-image.jpg?alt=media&token=c9a78295-2ad4-4acf-872d-c193116783c5"
+    )
+    session.isLoggedIn = true
+
+    let auth = AuthenticationViewModel(session: session)
+    return HomeView(session: session, authVM: auth)
 }

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct AuthenticateMailView: View {
-    @EnvironmentObject var authViewModel: AuthViewModel
+    @ObservedObject var authVM: AuthenticationViewModel
     @EnvironmentObject var coordinator: AppCoordinator
     var body: some View {
         VStack {
@@ -17,7 +17,7 @@ struct AuthenticateMailView: View {
             Image("title")
             .padding(.bottom, 64)
             Group {
-                TextField(text: $authViewModel.email) {
+                TextField(text: $authVM.email) {
                     Text("Email")
                         .foregroundStyle(.white.opacity(0.5))
                 }
@@ -25,7 +25,8 @@ struct AuthenticateMailView: View {
                 .background(Color("CustomGray"))
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(.never)
-                SecureField(text: $authViewModel.password) {
+                .keyboardType(.emailAddress)
+                SecureField(text: $authVM.password) {
                     Text("Password")
                         .foregroundStyle(.white.opacity(0.5))
                 }
@@ -36,7 +37,7 @@ struct AuthenticateMailView: View {
             .padding(.horizontal)
             .foregroundStyle(.white)
             Button {
-                authViewModel.authenticate {
+                authVM.signIn {
                     coordinator.resetNavigation()
                 }
             } label: {
@@ -75,9 +76,17 @@ struct AuthenticateMailView: View {
 }
 
 #Preview {
-    @Previewable @StateObject var authViewModel = AuthViewModel()
     @Previewable @StateObject var coordinator = AppCoordinator()
-    AuthenticateMailView()
-        .environmentObject(authViewModel)
+    let session = UserSessionViewModel()
+    session.currentUser = User(
+        uid: "123",
+        email: "test@test.com",
+        fullname: "Jane Test",
+        imageURL: "https://firebasestorage.googleapis.com/v0/b/eventorias-df464.firebasestorage.app/o/profils_image%2Fdefault-profile-image.jpg?alt=media&token=c9a78295-2ad4-4acf-872d-c193116783c5"
+    )
+    session.isLoggedIn = true
+    
+    let auth = AuthenticationViewModel(session: session)
+    return AuthenticateMailView(authVM: auth)
         .environmentObject(coordinator)
 }
