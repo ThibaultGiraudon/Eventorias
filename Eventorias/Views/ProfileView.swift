@@ -42,7 +42,9 @@ struct ProfileView: View {
                     .textInputAutocapitalization(.never)
                 Spacer()
                 Button {
-                    session.updateUser(email: email, fullname: fullname, imageURL: user.imageURL)
+                    Task {
+                        await session.updateUser(email: email, fullname: fullname, imageURL: user.imageURL)
+                    }
                 } label: {
                     Text("Save chage")
                         .font(.title2)

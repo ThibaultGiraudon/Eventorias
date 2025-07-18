@@ -78,17 +78,18 @@ class UserSessionViewModel: ObservableObject {
     ///   - email: The new  email.
     ///   - fullname: The new  full name.
     ///   - imageURL: The new  image URL.
-    func updateUser(email: String, fullname: String, imageURL: String) {
-        currentUser?.email = email
-        currentUser?.fullname = fullname
-        currentUser?.imageURL = imageURL
+    func updateUser(email: String, fullname: String, imageURL: String) async {
         guard let user = currentUser else {
+            self.error = "User not logged in"
             return
         }
-        userRepository.setUser(user)
-        authRepository.editUser(email: email) { error in
-            self.error = error?.localizedDescription
-            print(error ?? "Successfuly change email to \(email)")
+        let updatedUser = User(uid: user.uid, email: email, fullname: fullname, imageURL: imageURL)
+        do {
+            try await authRepository.editUser(email: email)
+            userRepository.setUser(updatedUser)
+            self.currentUser = updatedUser
+        } catch {
+            self.error = error.localizedDescription
         }
     }
 

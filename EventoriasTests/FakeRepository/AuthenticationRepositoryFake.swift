@@ -33,8 +33,10 @@ class AuthenticationRepositoryFake: AuthRepositoryInterface {
         }
     }
     
-    func editUser(email: String, completion: @escaping ((any Error)?) -> Void) {
-        completion(error)
+    func editUser(email: String) throws {
+        if let error = error {
+            throw error
+        }
     }
     
     func identifyError(_ error: any Error) -> String {

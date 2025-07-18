@@ -12,6 +12,6 @@ protocol AuthRepositoryInterface {
     func register(email: String, password: String) async throws -> String
     func authenticate(email: String, password: String) async throws -> String
     func signOut() throws
-    func editUser(email: String, completion: @escaping (Error?) -> Void)
+    func editUser(email: String) async throws
     func identifyError(_ error: Error) -> String 
 }

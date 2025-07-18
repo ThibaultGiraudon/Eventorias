@@ -49,37 +49,24 @@ class AuthRepository: AuthRepositoryInterface {
     /// - Parameters:
     ///   - email: The new email address to update.
     ///   - completion: A closure called with an optional error.
-    func editUser(email: String, completion: @escaping (Error?) -> Void) {
-        self.reauthenticateIfNeeded { error in
-            guard error == nil else {
-                completion(error)
-                return
-            }
+    func editUser(email: String) async throws {
+        try self.reauthenticateIfNeeded()
             
-            guard let user = self.auth.currentUser else {
-                completion(AuthErrorCode.userNotFound)
-                return
-            }
-            
-            user.sendEmailVerification(beforeUpdatingEmail: email, completion: completion)
-        }
+        try await auth.currentUser?.sendEmailVerification(beforeUpdatingEmail: email)
     }
     
     /// Reauthenticates the current user using stored credentials from Keychain.
     ///
     /// - Parameter completion: A closure called with an optional error.
-    private func reauthenticateIfNeeded(completion: @escaping (Error?) -> Void) {
+    private func reauthenticateIfNeeded() throws {
         guard let user = auth.currentUser,
               let email = KeychainHelper.shared.read(for: "UserEmail"),
               let password = KeychainHelper.shared.read(for: "UserPassword") else {
-            completion(NSError(domain: "", code: 401, userInfo: [NSLocalizedDescriptionKey: "Missing credentials"]))
-            return
+            throw NSError(domain: "", code: 401, userInfo: [NSLocalizedDescriptionKey: "Missing credentials"])
         }
         
         let credential = EmailAuthProvider.credential(withEmail: email, password: password)
-        user.reauthenticate(with: credential) { _, error in
-            completion(error)
-        }
+        user.reauthenticate(with: credential)
     }
     
     /// Translates Firebase Auth errors into user-friendly messages.
