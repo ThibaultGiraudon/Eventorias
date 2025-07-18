@@ -31,8 +31,8 @@ class UserSessionViewModel: ObservableObject {
 
     // MARK: - Private Propeties
     
-    private let userRepository: UserRepository
-    private let authRepository: AuthRepository
+    private let userRepository: UserRepositoryInterface
+    private let authRepository: AuthRepositoryInterface
 
     // MARK: - Initializer
     
@@ -41,8 +41,8 @@ class UserSessionViewModel: ObservableObject {
     /// - Parameters:
     ///   - userRepository: The user data repository (default is `UserRepository()`).
     ///   - authRepository: The authentication repository (default is `AuthRepository()`).
-    init(userRepository: UserRepository = .init(),
-         authRepository: AuthRepository = .init()) {
+    init(userRepository: UserRepositoryInterface = UserRepository(),
+         authRepository: AuthRepositoryInterface = AuthRepository()) {
         self.userRepository = userRepository
         self.authRepository = authRepository
     }
@@ -68,7 +68,6 @@ class UserSessionViewModel: ObservableObject {
         }
     }
     
-    
     /// Updates the user's personal information such as:
     /// `email`, `fullname` and `imageURL`.
     ///
@@ -86,10 +85,7 @@ class UserSessionViewModel: ObservableObject {
         guard let user = currentUser else {
             return
         }
-        userRepository.setUser(user) { error in
-            self.error = error?.localizedDescription
-            print(error ?? "User updated successfuly")
-        }
+        userRepository.setUser(user)
         authRepository.editUser(email: email) { error in
             self.error = error?.localizedDescription
             print(error ?? "Successfuly change email to \(email)")

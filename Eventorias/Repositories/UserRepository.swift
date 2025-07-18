@@ -9,7 +9,7 @@ import Foundation
 import Firebase
 
 /// A repository class that handles all user-related operation using Firebase Firestore.
-class UserRepository {
+class UserRepository: UserRepositoryInterface {
     let db = Firestore.firestore()
     
     /// Retrieves a user document from Firestore using the specified UID.
@@ -27,7 +27,7 @@ class UserRepository {
     /// - Parameters:
     ///   - user: The `User` to be created or updated.
     ///   - completion: A closure called with an optionnal error if the opperation failed.
-    func setUser(_ user: User, completion: @escaping (Error?) -> Void) {
+    func setUser(_ user: User) {
         let data: [String: Any] = [
             "email": user.email,
             "fullname": user.fullname,
@@ -35,6 +35,6 @@ class UserRepository {
             "uid": user.uid
         ]
         
-        db.collection("users").document(user.uid).setData(data, completion: completion)
+        db.collection("users").document(user.uid).setData(data)
     }
 }

@@ -48,8 +48,13 @@ struct RegisterView: View {
             .padding(.horizontal)
             .foregroundStyle(.white)
             Button {
-                authVM.register {
-                    coordinator.resetNavigation()
+                Task {
+                    do {
+                        try await authVM.register()
+                        coordinator.resetNavigation()
+                    } catch {
+                        
+                    }
                 }
             } label: {
                 Text("Create an account")

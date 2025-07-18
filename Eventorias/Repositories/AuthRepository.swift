@@ -9,7 +9,7 @@ import Foundation
 import FirebaseAuth
 
 /// A repository class that handles all authentication-related operations using Firebase Auth.
-class AuthRepository {
+class AuthRepository: AuthRepositoryInterface {
     let auth = Auth.auth()
     
     /// Registers a new user with the given email and password.
@@ -18,9 +18,9 @@ class AuthRepository {
     ///   - email: The email address to register.
     ///   - password: The user's chosen password.
     ///   - completion: A closure called with the result of the registration or an error.
-    func register(email: String, password: String, completion: @escaping (AuthDataResult?, Error?) -> Void) {
-        auth.createUser(withEmail: email, password: password, completion: completion)
-        auth.currentUser?.sendEmailVerification()
+    func register(email: String, password: String) async throws -> String {
+        let result = try await auth.createUser(withEmail: email, password: password)
+        return result.user.uid
     }
     
     /// Authenticates an existing user using email and password credentials.
@@ -29,21 +29,16 @@ class AuthRepository {
     ///   - email: The user's email address.
     ///   - password: The user's password.
     ///   - completion: A closure called with the result of the sign-in attempt or an error.
-    func authenticate(email: String, password: String, completion: @escaping (AuthDataResult?, Error?) -> Void) {
-        auth.signIn(withEmail: email, password: password, completion: completion)
+    func authenticate(email: String, password: String) async throws -> String {
+        let result = try await auth.signIn(withEmail: email, password: password)
+        return result.user.uid
     }
     
     /// Signs out the currently authenticated user.
     ///
     /// - Parameter completion: A closure called with an optional error if the sign-out fails.
-    func signOut(completion: @escaping (Error?) -> Void) {
-        do {
-            try auth.signOut()
-            completion(nil)
-        } catch {
-            print("Error signing out \(error)")
-            completion(error)
-        }
+    func signOut() throws {
+        try auth.signOut()
     }
     
     /// Attempts to update the current user's email after reauthentication.
@@ -73,7 +68,7 @@ class AuthRepository {
     /// Reauthenticates the current user using stored credentials from Keychain.
     ///
     /// - Parameter completion: A closure called with an optional error.
-    func reauthenticateIfNeeded(completion: @escaping (Error?) -> Void) {
+    private func reauthenticateIfNeeded(completion: @escaping (Error?) -> Void) {
         guard let user = auth.currentUser,
               let email = KeychainHelper.shared.read(for: "UserEmail"),
               let password = KeychainHelper.shared.read(for: "UserPassword") else {

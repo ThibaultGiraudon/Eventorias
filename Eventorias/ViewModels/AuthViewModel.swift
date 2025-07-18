@@ -34,9 +34,9 @@ class AuthenticationViewModel: ObservableObject {
 
     // MARK: - Private Properties
     
-    private let authRepository: AuthRepository
-    private let userRepository: UserRepository
-    private unowned let session: UserSessionViewModel
+    private let authRepository: AuthRepositoryInterface
+    private let userRepository: UserRepositoryInterface
+    private let session: UserSessionViewModel
     
     // MARK: - Initializer
 
@@ -47,8 +47,8 @@ class AuthenticationViewModel: ObservableObject {
     ///   - authRepository: The authentication repository ( default is `AuthRepository()`).
     ///   - userRepository: The user data repository ( default is `UserRepository()`).
     init(session: UserSessionViewModel,
-         authRepository: AuthRepository = .init(),
-         userRepository: UserRepository = .init()) {
+         authRepository: AuthRepositoryInterface = AuthRepository(),
+         userRepository: UserRepositoryInterface = UserRepository()) {
         self.authRepository = authRepository
         self.userRepository = userRepository
         self.session = session
@@ -60,29 +60,18 @@ class AuthenticationViewModel: ObservableObject {
     /// Stores user data in `UserSessionViewModel`.
     ///
     /// - Parameter completion: A closure called upon successful authentication.
-    func signIn(completion: @escaping () -> Void) {
+    func signIn() async throws {
         authenticationState = .signingIn
-        authRepository.authenticate(email: email, password: password) { result, error in
-            if let error = error {
-                print("Sign in error: \(error)")
-                self.error = self.authRepository.identifyError(error)
-                self.authenticationState = .signedOut
-                return
-            }
-
-            guard let uid = result?.user.uid else {
-                self.authenticationState = .signedOut
-                return
-            }
-
-            Task {
-                await self.session.loadUser(by: uid)
-                // TODO: ask user for "remember me" before saving credentials
-                KeychainHelper.shared.save(self.email, for: "UserEmail")
-                KeychainHelper.shared.save(self.password, for: "UserPassword")
-                completion()
-                self.authenticationState = .signedIn
-            }
+        do {
+            let uid = try await authRepository.authenticate(email: email, password: password)
+            await session.loadUser(by: uid)
+            KeychainHelper.shared.save(self.email, for: "UserEmail")
+            KeychainHelper.shared.save(self.password, for: "UserPassword")
+            self.authenticationState = .signedIn
+        } catch {
+            self.error = error.localizedDescription
+            self.authenticationState = .signedOut
+            throw error
         }
     }
 
@@ -90,51 +79,30 @@ class AuthenticationViewModel: ObservableObject {
     /// saves user data in Firestore, and stores user data in `UserSessionViewModel`.
     ///
     /// - Parameter completion: A closure called upon successful registration.
-    func register(completion: @escaping () -> Void) {
+    func register() async throws {
         self.authenticationState = .signingIn
-        authRepository.register(email: email, password: password) { result, error in
-            if let error = error {
-                print("Register error: \(error)")
-                self.error = self.authRepository.identifyError(error)
-                self.authenticationState = .signedOut
-                return
-            }
-
-            guard let uid = result?.user.uid else {
-                self.authenticationState = .signedOut
-                return
-            }
-
-            let newUser = User(uid: uid, email: self.email, fullname: self.fullname, imageURL: nil)
-
-            self.userRepository.setUser(newUser) { error in
-                if let error = error {
-                    print("Saving user failed: \(error)")
-                    return
-                }
-
-                Task {
-                    await self.session.loadUser(by: uid)
-                    completion()
-                    KeychainHelper.shared.save(self.email, for: "UserEmail")
-                    KeychainHelper.shared.save(self.password, for: "UserPassword")
-                    self.authenticationState = .signedIn
-                }
-            }
+        do {
+            let uid = try await authRepository.register(email: email, password: password)
+            let newUser = User(uid: uid, email: email, fullname: fullname, imageURL: nil)
+            userRepository.setUser(newUser)
+            await session.loadUser(by: uid)
+            KeychainHelper.shared.save(self.email, for: "UserEmail")
+            KeychainHelper.shared.save(self.password, for: "UserPassword")
+            self.authenticationState = .signedIn
+        } catch {
+            self.error = error.localizedDescription
+            self.authenticationState = .signedOut
+            throw error
         }
     }
 
     /// Signs out the current user and clears the `UserSessionViewModel`.
-    func signOut() {
-        authRepository.signOut { error in
-            if let error = error {
-                print("Sign out error: \(error)")
-                self.error = error.localizedDescription
-                self.authenticationState = .signedIn
-                return
-            }
-            self.session.logout()
-            self.authenticationState = .signedOut
+    func signOut() async {
+        do {
+            try authRepository.signOut()
+        } catch {
+            self.error = error.localizedDescription
+            self.authenticationState = .signedIn
         }
     }
 }

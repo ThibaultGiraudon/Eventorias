@@ -28,7 +28,9 @@ struct WelcomeView: View {
                 Text("Welcome \(user.fullname)")
 
                 Button("Log out") {
-                    authVM.signOut()
+                    Task {
+                        await authVM.signOut()
+                    }
                 }
                 .padding()
             } else {
