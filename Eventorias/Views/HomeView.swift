@@ -12,10 +12,13 @@ struct HomeView: View {
     @ObservedObject var authVM: AuthenticationViewModel
     var body: some View {
         VStack {
-            if session.isLoggedIn {
-                WelcomeView(session: session, authVM: authVM)
-            } else {
+            switch authVM.authenticationState {
+            case .signedOut:
                 AuthenticateView()
+            case .signingIn:
+                ProgressView()
+            case .signedIn:
+                ProfileView(session: session)
             }
         }
     }

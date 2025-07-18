@@ -13,7 +13,7 @@ struct User {
     var email: String
     var fullname: String
     var imageURL: String
-    
+        
     init(uid: String, email: String, fullname: String, imageURL: String?) {
         self.uid = uid
         self.email = email

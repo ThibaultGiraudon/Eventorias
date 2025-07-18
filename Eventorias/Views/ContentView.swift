@@ -19,7 +19,7 @@ struct ContentView: View {
     
     var body: some View {
         NavigationStack(path: $coordinator.path) {
-            VStack {
+            VStack { 
                 HomeView(session: session, authVM: authVM)
             }
             .navigationDestination(for: AppRoute.self) { route in
