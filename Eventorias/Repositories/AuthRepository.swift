@@ -12,6 +12,12 @@ import FirebaseAuth
 class AuthRepository: AuthRepositoryInterface {
     let auth = Auth.auth()
     
+    init() {
+        #if DEBUG
+        auth.useEmulator(withHost: "localhost", port: 9000)
+        #endif
+    }
+    
     /// Registers a new user with the given email and password.
     ///
     /// - Parameters:
