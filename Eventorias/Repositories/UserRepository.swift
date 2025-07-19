@@ -12,6 +12,12 @@ import Firebase
 class UserRepository: UserRepositoryInterface {
     let db = Firestore.firestore()
     
+    init() {
+        #if DEBUG
+        db.useEmulator(withHost: "localhost", port: 9010)
+        #endif
+    }
+    
     /// Retrieves a user document from Firestore using the specified UID.
     ///
     /// - Parameter uid: The unique identifier of the user.
