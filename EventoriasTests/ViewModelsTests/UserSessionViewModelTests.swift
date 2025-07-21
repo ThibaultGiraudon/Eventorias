@@ -7,6 +7,7 @@
 
 import XCTest
 @testable import Eventorias
+import FirebaseAuth
 
 final class UserSessionViewModelTests: XCTestCase {
     @MainActor
@@ -109,6 +110,12 @@ final class UserSessionViewModelTests: XCTestCase {
         let userRepositoryFake = UserRepositoryFake()
         userRepositoryFake.user = User(uid: "123", email: "charles.leclerc@ferrari.mc", fullname: "Charles Leclerc", imageURL: nil)
         let session = UserSessionViewModel(userRepository: userRepositoryFake, authRepository: authRepositoryFake)
+        
+        do {
+            try await Auth.auth().createUser(withEmail: "testUserVM@test.app", password: "123456")
+        } catch {
+            XCTFail("Failed to create user")
+        }
         
         await session.loadUser(by: "123")
         await session.uploadImage(image)

@@ -8,6 +8,7 @@
 import XCTest
 @testable import Eventorias
 import FirebaseStorage
+import FirebaseAuth
 
 final class StorageRepositoryTests: XCTestCase {
 
@@ -15,8 +16,8 @@ final class StorageRepositoryTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        
         storageRepository = StorageRepository()
+        
     }
 
     override func tearDown() {
@@ -31,7 +32,8 @@ final class StorageRepositoryTests: XCTestCase {
         }
         
         do {
-            let url = try await storageRepository.uploadImage(image)
+            try await Auth.auth().createUser(withEmail: "testStorage@test.app", password: "123456")
+            let url = try await storageRepository.uploadImage(image, to: "/profils_image/")
             XCTAssert(!url.isEmpty, "URL should not be empty")
             try await storageRepository.deleteImage(with: url)
         } catch {
@@ -43,7 +45,7 @@ final class StorageRepositoryTests: XCTestCase {
         let image = UIImage()
         
         do {
-            _ = try await storageRepository.uploadImage(image)
+            _ = try await storageRepository.uploadImage(image, to: "/profils_image/")
             XCTFail("Uploading image should fails.")
         } catch {
             XCTAssertEqual(error.localizedDescription, URLError(.badURL).localizedDescription)
