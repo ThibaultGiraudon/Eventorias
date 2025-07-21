@@ -109,7 +109,7 @@ class UserSessionViewModel: ObservableObject {
         }
         do {
             let currentImageURL = user.imageURL
-            let imageURL = try await storageRepository.uploadImage(image)
+            let imageURL = try await storageRepository.uploadImage(image, to: "/profils_image/")
             print("Successfuly uploaded image")
             let updatedUser = User(uid: user.uid, email: user.email, fullname: user.fullname, imageURL: imageURL)
             userRepository.setUser(updatedUser)

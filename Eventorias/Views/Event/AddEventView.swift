@@ -18,12 +18,12 @@ struct AddEventView: View {
             ScrollView {
                 VStack(spacing: 24) {
                     CustomTextField(title: "Title", label: "New event", text: $viewModel.title)
-                    CustomTextField(title: "Description", label: "Tap here to enter your description", text: $viewModel.title)
+                    CustomTextField(title: "Description", label: "Tap here to enter your description", text: $viewModel.description)
                     HStack(spacing: 16) {
                         CustomTextField(title: "Date", label: "MM/DD/YYYY", text: $viewModel.date)
                         CustomTextField(title: "Time", label: "HH:MM", text: $viewModel.hour)
                     }
-                    CustomTextField(title: "Address", label: "Enter full address", text: $viewModel.title)
+                    CustomTextField(title: "Address", label: "Enter full address", text: $viewModel.address)
                 }
                 .padding(.horizontal, 16)
                 .padding(.bottom, 48)
@@ -61,7 +61,9 @@ struct AddEventView: View {
             }
             Spacer()
             Button {
-                
+                Task {
+                    await viewModel.addEvent()
+                }
             } label: {
                 Text("Validate")
                     .font(.title3)
@@ -96,5 +98,14 @@ struct AddEventView: View {
 }
 
 #Preview {
-    AddEventView(viewModel: AddEventViewModel())
+    let session = UserSessionViewModel()
+    session.currentUser = User(
+        uid: "123",
+        email: "test@test.com",
+        fullname: "Jane Test",
+        imageURL: "https://firebasestorage.googleapis.com/v0/b/eventorias-df464.firebasestorage.app/o/profils_image%2Fdefault-profile-image.jpg?alt=media&token=c9a78295-2ad4-4acf-872d-c193116783c5"
+    )
+    session.isLoggedIn = true
+    
+    return AddEventView(viewModel: AddEventViewModel(session: session))
 }

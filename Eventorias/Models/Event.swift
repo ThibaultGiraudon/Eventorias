@@ -11,10 +11,12 @@ struct Event: Codable, Identifiable {
     var id = UUID().uuidString
     var title: String
     var descrition: String
-    var date: String
-    var hour: String
+    var date: Date
+    var hour: Date
+    var imageURL: String
     var address: String
     var location: Location
+    var creatorID: String
     
     struct Location: Codable {
         var latitude: Double

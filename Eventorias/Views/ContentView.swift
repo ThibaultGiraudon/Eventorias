@@ -11,11 +11,12 @@ struct ContentView: View {
     @EnvironmentObject var coordinator: AppCoordinator
     @MainActor @ObservedObject var session: UserSessionViewModel
     @MainActor @StateObject var authVM: AuthenticationViewModel
-    @StateObject var addEventVM: AddEventViewModel = .init()
+    @StateObject var addEventVM: AddEventViewModel
     
     init(session: UserSessionViewModel) {
         self.session = session
         self._authVM = StateObject(wrappedValue: AuthenticationViewModel(session: session))
+        self._addEventVM = StateObject(wrappedValue: AddEventViewModel(session: session))
     }
     
     var body: some View {

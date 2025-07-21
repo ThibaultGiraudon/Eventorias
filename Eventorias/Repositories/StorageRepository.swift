@@ -24,9 +24,9 @@ class StorageRepository {
     /// - Parameter uiImage: The `UIImage` to be uploaded.
     /// - Returns: a `String` representing the url where the image is saved.
     /// - Throws: an `Error` if an operation fails.
-    func uploadImage(_ uiImage: UIImage) async throws -> String {
+    func uploadImage(_ uiImage: UIImage, to path: String) async throws -> String {
         let newID = UUID().uuidString
-        let imageRef = ref.child("profils_image/\(newID).jpg")
+        let imageRef = ref.child("\(path)/\(newID).jpg")
         
         let metaData = StorageMetadata()
         metaData.contentType = "image/jpg"
