@@ -13,6 +13,8 @@ struct User: Hashable {
     var email: String
     var fullname: String
     var imageURL: String
+    
+    let defaultImage: String = "https://firebasestorage.googleapis.com/v0/b/eventorias-df464.firebasestorage.app/o/profils_image%2Fdefault-profile-image.jpg?alt=media&token=c9a78295-2ad4-4acf-872d-c193116783c5"
         
     init(uid: String, email: String, fullname: String, imageURL: String?) {
         self.uid = uid
