@@ -11,8 +11,9 @@ import SwiftUI
 /// A view model responsible for managing user operations such as:
 /// retrieving lthe currently logged-in user and updating user information.
 ///
-/// This view model interacts with `AuthRepository` for email updates
-/// and `UserRepository` for user data persistence.
+/// This view model interacts with `AuthRepository` for email updates,
+/// `UserRepository` for user data persistence
+/// and `StorageRepository` to saves user profile image.
 @MainActor
 class UserSessionViewModel: ObservableObject {
     
@@ -97,6 +98,10 @@ class UserSessionViewModel: ObservableObject {
         }
     }
     
+    /// Uploads the given image thanks to the StorageRepository.
+    /// Deletes the old one if it wasn't the default image.
+    ///
+    /// - Parameter image: The `UIImage` to save.
     func uploadImage(_ image: UIImage) async {
         guard let user = currentUser else {
             self.error = "User not logged in"

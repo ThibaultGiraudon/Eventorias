@@ -9,6 +9,7 @@ import Foundation
 import FirebaseStorage
 import SwiftUI
 
+/// A repository class that handles all storage-related operations using Firebase Storage.
 class StorageRepository {
     let storage: Storage
     let ref: StorageReference
@@ -18,6 +19,12 @@ class StorageRepository {
         ref = storage.reference()
     }
     
+    
+    /// Uploads the given image to Firebase Storage.
+    ///
+    /// - Parameter uiImage: The `UIImage` to be uploaded.
+    /// - Returns: a `String` representing the url where the image is saved.
+    /// - Throws: an `Error` if an operation fails.
     func uploadImage(_ uiImage: UIImage) async throws -> String {
         let newID = UUID().uuidString
         let imageRef = ref.child("profils_image/\(newID).jpg")
@@ -35,6 +42,10 @@ class StorageRepository {
         return downloadURL.absoluteString
     }
     
+    /// Deletes the given image in Firebase Storage.
+    ///
+    /// - Parameter with: The url where the image is saved.
+    /// - Throws: an `Error` if delete fails.
     func deleteImage(with url: String) async throws {
         try await storage.reference(forURL: url).delete()
     }
