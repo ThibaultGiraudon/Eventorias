@@ -11,6 +11,7 @@ struct ContentView: View {
     @EnvironmentObject var coordinator: AppCoordinator
     @MainActor @ObservedObject var session: UserSessionViewModel
     @MainActor @StateObject var authVM: AuthenticationViewModel
+    @StateObject var addEventVM: AddEventViewModel = .init()
     
     init(session: UserSessionViewModel) {
         self.session = session
@@ -30,6 +31,8 @@ struct ContentView: View {
                     AuthenticateMailView(authVM: authVM)
                 case .register:
                     RegisterView(authVM: authVM)
+                case .addEvent:
+                    AddEventView(viewModel: addEventVM)
                 }
             }
         }

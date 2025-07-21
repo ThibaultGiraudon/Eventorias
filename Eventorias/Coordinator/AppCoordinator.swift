@@ -18,6 +18,10 @@ class AppCoordinator: ObservableObject {
         path.append(.register)
     }
     
+    func goToAddEvent() {
+        path.append(.addEvent)
+    }
+    
     func resetNavigation() {
         path = []
     }
@@ -27,4 +31,5 @@ enum AppRoute: Hashable {
     case home
     case mail
     case register
+    case addEvent
 }

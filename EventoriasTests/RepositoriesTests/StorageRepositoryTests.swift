@@ -43,7 +43,7 @@ final class StorageRepositoryTests: XCTestCase {
         let image = UIImage()
         
         do {
-            let url = try await storageRepository.uploadImage(image)
+            _ = try await storageRepository.uploadImage(image)
             XCTFail("Uploading image should fails.")
         } catch {
             XCTAssertEqual(error.localizedDescription, URLError(.badURL).localizedDescription)

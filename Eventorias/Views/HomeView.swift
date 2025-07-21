@@ -10,6 +10,7 @@ import SwiftUI
 struct HomeView: View {
     @ObservedObject var session: UserSessionViewModel
     @ObservedObject var authVM: AuthenticationViewModel
+    @State private var selectedTab: Tab = .events
     var body: some View {
         VStack {
             switch authVM.authenticationState {
@@ -18,7 +19,32 @@ struct HomeView: View {
             case .signingIn:
                 ProgressView()
             case .signedIn:
-                ProfileView(session: session)
+                VStack {
+                    switch selectedTab {
+                    case .events:
+                        EventListView()
+                    case .profile:
+                        ProfileView(session: session)
+                    }
+                    HStack(spacing: 33) {
+                        ForEach(Tab.allCases, id: \.self) { tab in
+                            VStack {
+                                Image(systemName: tab.icon)
+                                    .font(.title)
+                                Text(tab.rawValue)
+                            }
+                            .foregroundStyle(selectedTab == tab ? .red : .white)
+                            .onTapGesture {
+                                selectedTab = tab
+                            }
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                    .background {
+                        Color("background")
+                            .ignoresSafeArea()
+                    }
+                }
             }
         }
     }
