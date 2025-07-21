@@ -23,17 +23,14 @@ struct ProfileView: View {
         self.email = session.currentUser?.email ?? ""
     }
     var body: some View {
-        if let user = session.currentUser {
+        if session.currentUser != nil {
             VStack {
                 HStack {
                     Text("User profile")
                         .foregroundStyle(.white)
                         .font(.title)
                     Spacer()
-                    KFImage(URL(string: user.imageURL))
-                        .resizable()
-                        .frame(width: 50, height: 50)
-                        .clipShape(Circle())
+                    ProfileImageView(session: session)
                 }
                 CustomTextField(title: "Name", label: "", text: $fullname)
                     .padding(.bottom, 24)
@@ -43,7 +40,7 @@ struct ProfileView: View {
                 Spacer()
                 Button {
                     Task {
-                        await session.updateUser(email: email, fullname: fullname, imageURL: user.imageURL)
+                        await session.updateUser(email: email, fullname: fullname)
                     }
                 } label: {
                     Text("Save chage")

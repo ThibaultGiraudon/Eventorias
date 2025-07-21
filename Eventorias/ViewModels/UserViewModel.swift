@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 /// A view model responsible for managing user operations such as:
 /// retrieving lthe currently logged-in user and updating user information.
@@ -33,6 +34,7 @@ class UserSessionViewModel: ObservableObject {
     
     private let userRepository: UserRepositoryInterface
     private let authRepository: AuthRepositoryInterface
+    private let storageRepository: StorageRepository
 
     // MARK: - Initializer
     
@@ -42,9 +44,11 @@ class UserSessionViewModel: ObservableObject {
     ///   - userRepository: The user data repository (default is `UserRepository()`).
     ///   - authRepository: The authentication repository (default is `AuthRepository()`).
     init(userRepository: UserRepositoryInterface = UserRepository(),
-         authRepository: AuthRepositoryInterface = AuthRepository()) {
+         authRepository: AuthRepositoryInterface = AuthRepository(),
+         storageRepository: StorageRepository = StorageRepository()) {
         self.userRepository = userRepository
         self.authRepository = authRepository
+        self.storageRepository = storageRepository
     }
 
     // MARK: - Methods
@@ -78,18 +82,40 @@ class UserSessionViewModel: ObservableObject {
     ///   - email: The new  email.
     ///   - fullname: The new  full name.
     ///   - imageURL: The new  image URL.
-    func updateUser(email: String, fullname: String, imageURL: String) async {
+    func updateUser(email: String, fullname: String) async {
         guard let user = currentUser else {
             self.error = "User not logged in"
             return
         }
-        let updatedUser = User(uid: user.uid, email: email, fullname: fullname, imageURL: imageURL)
+        let updatedUser = User(uid: user.uid, email: email, fullname: fullname, imageURL: user.imageURL)
         do {
             try await authRepository.editUser(email: email)
             userRepository.setUser(updatedUser)
             self.currentUser = updatedUser
         } catch {
             self.error = error.localizedDescription
+        }
+    }
+    
+    func uploadImage(_ image: UIImage) async {
+        guard let user = currentUser else {
+            self.error = "User not logged in"
+            return
+        }
+        do {
+            let currentImageURL = user.imageURL
+            let imageURL = try await storageRepository.uploadImage(image)
+            print("Successfuly uploaded image")
+            let updatedUser = User(uid: user.uid, email: user.email, fullname: user.fullname, imageURL: imageURL)
+            userRepository.setUser(updatedUser)
+            if currentImageURL != user.defaultImage {
+                try await storageRepository.deleteImage(with: currentImageURL)
+            }
+            self.currentUser = updatedUser
+            print("Successfuly updated user")
+        } catch {
+            self.error = "Failed to upload image"
+            return
         }
     }
 
