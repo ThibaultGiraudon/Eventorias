@@ -24,7 +24,7 @@ final class StorageRepositoryTests: XCTestCase {
         super.tearDown()
     }
     
-    func testUploadImage() async {
+    func testUploadAndDeleteImageShouldSucceed() async {
         guard let image = loadImage(named: "charles-leclerc.jpg") else {
             XCTFail("Failed to get UIImage")
             return
@@ -36,6 +36,17 @@ final class StorageRepositoryTests: XCTestCase {
             try await storageRepository.deleteImage(with: url)
         } catch {
             XCTFail("Upload or delete image failed with: \(error)")
+        }
+    }
+    
+    func testUploadImageShouldFailed() async {
+        let image = UIImage()
+        
+        do {
+            let url = try await storageRepository.uploadImage(image)
+            XCTFail("Uploading image should fails.")
+        } catch {
+            XCTAssertEqual(error.localizedDescription, URLError(.badURL).localizedDescription)
         }
     }
     
