@@ -10,12 +10,10 @@ import FirebaseAuth
 
 /// A repository class that handles all authentication-related operations using Firebase Auth.
 class AuthRepository: AuthRepositoryInterface {
-    let auth = Auth.auth()
+    let auth: Auth
     
-    init() {
-        #if DEBUG
-        auth.useEmulator(withHost: "localhost", port: 9000)
-        #endif
+    init(auth: Auth = Auth.auth()) {
+        self.auth = auth
     }
     
     /// Registers a new user with the given email and password.

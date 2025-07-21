@@ -63,7 +63,7 @@ final class UserSessionViewModelTests: XCTestCase {
         let session = UserSessionViewModel(userRepository: userRepositoryFake, authRepository: authRepositoryFake)
         
         await session.loadUser(by: "123")
-        await session.updateUser(email: "pierre.gasly@alpine.fr", fullname: "Pierre Gasly", imageURL: "")
+        await session.updateUser(email: "pierre.gasly@alpine.fr", fullname: "Pierre Gasly")
         
         guard let user = session.currentUser else {
             XCTFail("Current user should not be nil")
@@ -78,7 +78,7 @@ final class UserSessionViewModelTests: XCTestCase {
         let userRepositoryFake = UserRepositoryFake()
         let session = UserSessionViewModel(userRepository: userRepositoryFake, authRepository: authRepositoryFake)
         
-        await session.updateUser(email: "pierre.gasly@alpine.fr", fullname: "Pierre Gasly", imageURL: "")
+        await session.updateUser(email: "pierre.gasly@alpine.fr", fullname: "Pierre Gasly")
         
         XCTAssertEqual(session.error, "User not logged in")
     }
@@ -93,7 +93,7 @@ final class UserSessionViewModelTests: XCTestCase {
         
         session.currentUser = User(uid: "123", email: "charles.leclerc@ferrari.mc", fullname: "Charles Leclerc", imageURL: nil)
         
-        await session.updateUser(email: "pierre.gasly@alpine.fr", fullname: "Pierre Gasly", imageURL: "")
+        await session.updateUser(email: "pierre.gasly@alpine.fr", fullname: "Pierre Gasly")
         
         XCTAssertEqual(session.error, URLError(.badURL).localizedDescription)
     }

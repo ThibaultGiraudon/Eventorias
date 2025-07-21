@@ -16,7 +16,8 @@ final class UserRepositoryTests: XCTestCase {
     override func setUp() {
         super.setUp()
         
-        Firestore.firestore().useEmulator(withHost: "localhost", port: 9010)
+//        let db = Firestore.firestore()
+//        db.useEmulator(withHost: "localhost", port: 9010)
         
         userRepository = UserRepository()
     }

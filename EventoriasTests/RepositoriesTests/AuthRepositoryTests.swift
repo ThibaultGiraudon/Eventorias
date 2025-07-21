@@ -17,9 +17,10 @@ final class AuthRepositoryTests: XCTestCase {
     override func setUp() {
         super.setUp()
         
-        Auth.auth().useEmulator(withHost: "localhost", port: 9000)
+        let auth = Auth.auth()
+        auth.useEmulator(withHost: "localhost", port: 9000)
         
-        authRepository = AuthRepository()
+        authRepository = AuthRepository(auth: auth)
     }
     
     override func tearDown() {
