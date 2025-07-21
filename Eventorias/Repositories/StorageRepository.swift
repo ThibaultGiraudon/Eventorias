@@ -19,7 +19,6 @@ class StorageRepository {
         ref = storage.reference()
     }
     
-    
     /// Uploads the given image to Firebase Storage.
     ///
     /// - Parameter uiImage: The `UIImage` to be uploaded.

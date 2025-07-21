@@ -10,14 +10,7 @@ import Firebase
 
 /// A repository class that handles all user-related operation using Firebase Firestore.
 class UserRepository: UserRepositoryInterface {
-    let db: Firestore
-    
-    init(db: Firestore = Firestore.firestore()) {
-        self.db = db
-        #if DEBUG
-        self.db.useEmulator(withHost: "localhost", port: 9010)
-        #endif
-    }
+    let db = Firestore.firestore()
     
     /// Retrieves a user document from Firestore using the specified UID.
     ///
