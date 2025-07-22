@@ -14,6 +14,7 @@ struct AddEventView: View {
     @State private var showPhotosPicker: Bool = false
     @State private var isCameraPresented: Bool = false
     @State private var selectedItem: PhotosPickerItem?
+    @EnvironmentObject var coordinator: AppCoordinator
     var body: some View {
         VStack {
             ScrollView {
@@ -26,7 +27,9 @@ struct AddEventView: View {
                     }
                     CustomTextField(title: "Address", label: "Enter full address", text: $viewModel.address)
                         .onSubmit {
-                            viewModel.geocodeAddress()
+                            Task {
+                                await viewModel.geocodeAddress()
+                            }
                         }
                 }
                 .padding(.horizontal, 16)
@@ -74,6 +77,7 @@ struct AddEventView: View {
             Button {
                 Task {
                     await viewModel.addEvent()
+                    coordinator.resetNavigation()
                 }
             } label: {
                 Text("Validate")

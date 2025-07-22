@@ -23,7 +23,7 @@ final class EventsRepositoryTests: XCTestCase {
     }
 
     func testSetAndGetAndDeleteEventShouldSucceed() async {
-        let event = Event(title: "title",
+        let newEvent = Event(title: "title",
                           descrition: "description",
                           date: .now,
                           hour: .now,
@@ -33,12 +33,16 @@ final class EventsRepositoryTests: XCTestCase {
                           creatorID: "123")
         
         do {
-            try eventsRepository.setEvent(event)
+            try eventsRepository.setEvent(newEvent)
             var events = try await eventsRepository.getEvents()
-            XCTAssertEqual(events.count, 1)
+            guard let event = events.first(where: { $0.title == "title" }) else {
+                XCTFail("Failed to get event")
+                return
+            }
+            XCTAssertEqual(event.descrition, "description")
             eventsRepository.deleteEvent(with: event.id)
             events = try await eventsRepository.getEvents()
-            XCTAssertTrue(events.isEmpty)
+            XCTAssertNil(events.first(where: { $0.title == "title" }))
         } catch {
             XCTFail("Operation should not fails")
         }

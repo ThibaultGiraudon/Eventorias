@@ -84,20 +84,26 @@ class AddEventViewModel: ObservableObject {
         }
     }
     
-    func geocodeAddress() {
-        let geocoder = CLGeocoder()
-        geocoder.geocodeAddressString(address) { placemarks, _ in
-            if let placemark = placemarks?.first, let location = placemark.location {
-                let newCoordinate = location.coordinate
-                self.location = Location(coordinate: newCoordinate)
-                self.position = MapCameraPosition.region(
-                    MKCoordinateRegion(
-                        center: CLLocationCoordinate2D(latitude: newCoordinate.latitude, longitude: newCoordinate.longitude),
-                        span: MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005))
-                )
-            } else {
-                print("Adresse non trouvée")
+    @MainActor
+    func geocodeAddress() async {
+        do {
+            let geocoder = CLGeocoder()
+            let placemarks = try await geocoder.geocodeAddressString(address)
+            guard let placemark = placemarks.first, let location = placemark.location else {
+                self.error = "Failed to find address"
+                return
             }
+            let newCoordinate = location.coordinate
+            self.location = Location(coordinate: .init(latitude: newCoordinate.latitude, longitude: newCoordinate.longitude))
+            print(location.coordinate.latitude)
+            print(location.coordinate.longitude)
+            self.position = MapCameraPosition.region(
+                MKCoordinateRegion(
+                    center: CLLocationCoordinate2D(latitude: newCoordinate.latitude, longitude: newCoordinate.longitude),
+                    span: MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005))
+            )
+        } catch {
+            self.error = "Failed to find address"
         }
     }
 }

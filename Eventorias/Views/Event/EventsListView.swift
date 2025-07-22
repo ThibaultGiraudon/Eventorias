@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct EventsListView: View {
-    @ObservedObject var eventsVM: EventsViewModel
+    @MainActor @ObservedObject var eventsVM: EventsViewModel
     @EnvironmentObject var coordinator: AppCoordinator
     var body: some View {
         VStack(alignment: .leading) {

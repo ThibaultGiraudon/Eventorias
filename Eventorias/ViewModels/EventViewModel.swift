@@ -13,9 +13,7 @@ class EventViewModel: ObservableObject {
     @Published var event: Event
     @Published var location: Location
     @Published var position: MapCameraPosition
-    var creator: User {
-        getUser()
-    }
+    @Published var creator: User = User()
     
     private let userRepository: UserRepository = .init()
     
@@ -27,17 +25,17 @@ class EventViewModel: ObservableObject {
              center: CLLocationCoordinate2D(latitude: event.location.latitude, longitude: event.location.longitude),
              span: MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005))
         )
+        Task {
+            await getUser(with: event.creatorID)
+        }
     }
     
-    func getUser() -> User {
-        var user = User(uid: "", email: "unknow", fullname: "unknow", imageURL: nil)
-        Task {
-            guard let fetchedUser = try await userRepository.getUser(withId: event.creatorID) else {
-                return user
-            }
-            user = fetchedUser
-            return user
+    @MainActor
+    func getUser(with id: String) async {
+        do {
+            self.creator = try await userRepository.getUser(withId: id) ?? User(uid: "nil", email: "unknow", fullname: "unknow", imageURL: nil)
+        } catch {
+            print(error)
         }
-        return user
     }
 }
