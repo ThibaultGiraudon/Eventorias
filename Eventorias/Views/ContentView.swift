@@ -36,6 +36,8 @@ struct ContentView: View {
                     RegisterView(authVM: authVM)
                 case .addEvent:
                     AddEventView(viewModel: addEventVM)
+                case .detailView(let event):
+                    EventDetailView(event: event)
                 }
             }
         }

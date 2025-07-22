@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Event: Codable, Identifiable {
+struct Event: Codable, Identifiable, Hashable {    
     var id = UUID().uuidString
     var title: String
     var descrition: String
@@ -18,7 +18,7 @@ struct Event: Codable, Identifiable {
     var location: Location
     var creatorID: String
     
-    struct Location: Codable {
+    struct Location: Codable, Hashable {
         var latitude: Double
         var longitude: Double
     }

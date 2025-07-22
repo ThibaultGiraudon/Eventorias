@@ -9,6 +9,7 @@ import Foundation
 
 class EventsViewModel: ObservableObject {
     @Published var events: [Event] = []
+    @Published var isLoading: Bool = true
     @Published var searchText: String = ""
     @Published var sortingBy: SortingOrder = .ascending
     @Published var filterBy: FilterType = .date
@@ -42,23 +43,15 @@ class EventsViewModel: ObservableObject {
     
     private let eventsRepository: EventsRepository = .init()
     
-    init() {
-        Task {
-            await self.fetchEvents()
-        }
-    }
-    
+    @MainActor
     func fetchEvents() async {
+        self.isLoading = true
         do {
             events = try await eventsRepository.getEvents()
-            print(events)
         } catch {
             print(error)
         }
-    }
-    
-    private func makeComparator<T: Comparable>(ascending: Bool) -> (T, T) -> Bool {
-        return ascending ? (<) : (>)
+        self.isLoading = false
     }
 }
 

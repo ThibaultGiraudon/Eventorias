@@ -22,6 +22,10 @@ class AppCoordinator: ObservableObject {
         path.append(.addEvent)
     }
     
+    func goToDetailView(for event: Event) {
+        path.append(.detailView(event: event))
+    }
+    
     func resetNavigation() {
         path = []
     }
@@ -32,4 +36,5 @@ enum AppRoute: Hashable {
     case mail
     case register
     case addEvent
+    case detailView(event: Event)
 }

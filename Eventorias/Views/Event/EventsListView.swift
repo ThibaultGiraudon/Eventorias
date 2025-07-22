@@ -68,10 +68,21 @@ struct EventsListView: View {
                 }
             }
             .padding(.bottom, 24)
-            
-            ScrollView(showsIndicators: false) {
-                ForEach(eventsVM.sortedEvents) { event in
-                    EventRowView(event: event)
+            if eventsVM.isLoading {
+                 LoadingView()
+            } else {
+                ScrollView(showsIndicators: false) {
+                    ForEach(eventsVM.sortedEvents) { event in
+                        EventRowView(event: event)
+                            .onTapGesture {
+                                coordinator.goToDetailView(for: event)
+                            }
+                    }
+                }
+                .refreshable {
+                    Task {
+                        await eventsVM.fetchEvents()
+                    }
                 }
             }
         }
@@ -95,6 +106,11 @@ struct EventsListView: View {
                             .fill(.red)
                     }
                     .padding()
+            }
+        }
+        .onAppear {
+            Task {
+                await eventsVM.fetchEvents()
             }
         }
     }
