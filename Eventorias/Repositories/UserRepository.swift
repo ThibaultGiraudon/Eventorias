@@ -37,4 +37,8 @@ class UserRepository: UserRepositoryInterface {
         
         db.collection("users").document(user.uid).setData(data)
     }
+    
+    func setData(_ data: [String: Any], id: String) {
+        db.collection("users").document(id).setData(data)
+    }
 }

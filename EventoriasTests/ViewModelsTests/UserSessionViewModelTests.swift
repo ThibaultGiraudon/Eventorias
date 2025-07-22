@@ -10,6 +10,15 @@ import XCTest
 import FirebaseAuth
 
 final class UserSessionViewModelTests: XCTestCase {
+    
+    func testUserShouldSucceed() {
+        let user = User()
+        
+        XCTAssertEqual(user.email, "")
+        XCTAssertEqual(user.fullname, "")
+        XCTAssertEqual(user.imageURL, user.defaultImage)
+    }
+    
     @MainActor
     func testLoadUserShouldSucceed() async {
         let authRepositoryFake = AuthenticationRepositoryFake()
