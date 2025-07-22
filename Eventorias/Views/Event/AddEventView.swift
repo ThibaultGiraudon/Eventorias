@@ -7,6 +7,7 @@
 
 import SwiftUI
 import PhotosUI
+import MapKit
 
 struct AddEventView: View {
     @ObservedObject var viewModel: AddEventViewModel
@@ -24,9 +25,19 @@ struct AddEventView: View {
                         CustomTextField(title: "Time", label: "HH:MM", text: $viewModel.hour)
                     }
                     CustomTextField(title: "Address", label: "Enter full address", text: $viewModel.address)
+                        .onSubmit {
+                            viewModel.geocodeAddress()
+                        }
                 }
                 .padding(.horizontal, 16)
                 .padding(.bottom, 48)
+                if let location = viewModel.location {
+                    Map(position: $viewModel.position) {
+                        Marker("", coordinate: location.coordinate)
+                    }
+                    .mapStyle(.hybrid)
+                    .frame(height: 200)
+                }
                 HStack(spacing: 16) {
                     Image(systemName: "camera")
                         .foregroundStyle(.black)

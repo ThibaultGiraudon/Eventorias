@@ -7,6 +7,12 @@
 
 import Foundation
 import SwiftUI
+import MapKit
+
+struct Location: Identifiable {
+    var id = UUID()
+    var coordinate: CLLocationCoordinate2D
+}
 
 class AddEventViewModel: ObservableObject {
     @Published var title: String = ""
@@ -16,6 +22,12 @@ class AddEventViewModel: ObservableObject {
     @Published var address: String = ""
     @Published var uiImage: UIImage?
     @Published var error: String?
+    @Published var location: Location?
+    @Published var position = MapCameraPosition.region(
+        MKCoordinateRegion(
+            center: CLLocationCoordinate2D(latitude: 48.8566, longitude: 2.3522),
+            span: MKCoordinateSpan(latitudeDelta: 1, longitudeDelta: 1))
+    )
     
     var shouldDisable: Bool {
         title.isEmpty || description.isEmpty || date.isEmpty || hour.isEmpty || address.isEmpty || uiImage == nil
@@ -35,6 +47,11 @@ class AddEventViewModel: ObservableObject {
         guard let date = self.date.toDate(), let hour = self.hour.toHour() else {
             self.error = "Bad date format."
             print("date error")
+            return
+        }
+        
+        guard let coordinate = location?.coordinate else {
+            self.error = "Failed to get address"
             return
         }
         
@@ -58,12 +75,29 @@ class AddEventViewModel: ObservableObject {
                               hour: hour,
                               imageURL: url,
                               address: address,
-                              location: .init(latitude: 0, longitude: 0),
+                              location: .init(latitude: coordinate.latitude, longitude: coordinate.longitude),
                               creatorID: user.uid)
             try eventRepository.setEvent(event)
         } catch {
             self.error = error.localizedDescription
             print(error.localizedDescription)
+        }
+    }
+    
+    func geocodeAddress() {
+        let geocoder = CLGeocoder()
+        geocoder.geocodeAddressString(address) { placemarks, _ in
+            if let placemark = placemarks?.first, let location = placemark.location {
+                let newCoordinate = location.coordinate
+                self.location = Location(coordinate: newCoordinate)
+                self.position = MapCameraPosition.region(
+                    MKCoordinateRegion(
+                        center: CLLocationCoordinate2D(latitude: newCoordinate.latitude, longitude: newCoordinate.longitude),
+                        span: MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005))
+                )
+            } else {
+                print("Adresse non trouvée")
+            }
         }
     }
 }
