@@ -40,9 +40,9 @@ final class EventsRepositoryTests: XCTestCase {
                 return
             }
             XCTAssertEqual(event.descrition, "description")
-            eventsRepository.deleteEvent(with: event.id)
+            try await eventsRepository.clearDB()
             events = try await eventsRepository.getEvents()
-            XCTAssertNil(events.first(where: { $0.title == "title" }))
+            XCTAssertEqual(events.count, 0)
         } catch {
             XCTFail("Operation should not fails")
         }

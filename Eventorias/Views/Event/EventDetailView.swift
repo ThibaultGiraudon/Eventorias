@@ -12,6 +12,7 @@ import MapKit
 struct EventDetailView: View {
     var event: Event
     @StateObject var eventVM: EventViewModel
+    @State private var creator: User = .init()
     init(event: Event) {
         self.event = event
         self._eventVM = StateObject(wrappedValue: EventViewModel(event: event))
@@ -40,7 +41,7 @@ struct EventDetailView: View {
                 
                 Spacer()
                 
-                KFImage(URL(string: eventVM.creator.imageURL))
+                KFImage(URL(string: creator.imageURL))
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: 60, height: 60)
@@ -70,6 +71,9 @@ struct EventDetailView: View {
         .background {
             Color("background")
                 .ignoresSafeArea()
+        }
+        .task {
+            creator = await eventVM.getUser(with: event.creatorID)
         }
     }
 }
