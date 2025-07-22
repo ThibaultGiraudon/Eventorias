@@ -10,6 +10,7 @@ import SwiftUI
 struct HomeView: View {
     @ObservedObject var session: UserSessionViewModel
     @ObservedObject var authVM: AuthenticationViewModel
+    @ObservedObject var eventsVM: EventsViewModel
     @State private var selectedTab: Tab = .events
     var body: some View {
         VStack {
@@ -22,7 +23,7 @@ struct HomeView: View {
                 VStack {
                     switch selectedTab {
                     case .events:
-                        EventListView()
+                        EventsListView(eventsVM: eventsVM)
                     case .profile:
                         ProfileView(session: session)
                     }
@@ -61,5 +62,6 @@ struct HomeView: View {
     session.isLoggedIn = true
 
     let auth = AuthenticationViewModel(session: session)
-    return HomeView(session: session, authVM: auth)
+    let eventsVM = EventsViewModel()
+    return HomeView(session: session, authVM: auth, eventsVM: eventsVM)
 }

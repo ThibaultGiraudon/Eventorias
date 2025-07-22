@@ -15,7 +15,7 @@ class EventsRepository {
         let snapshot = try await db.collection("events").getDocuments()
         
         let documents = snapshot.documents
-        
+        print("Documents: \(documents.count)")
         let items = documents.compactMap {
             try? $0.data(as: Event.self)
         }

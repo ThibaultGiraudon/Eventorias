@@ -33,7 +33,7 @@ final class StorageRepositoryTests: XCTestCase {
         
         do {
             try await Auth.auth().createUser(withEmail: "testStorage@test.app", password: "123456")
-            let url = try await storageRepository.uploadImage(image, to: "/profils_image/")
+            let url = try await storageRepository.uploadImage(image, to: "profils_image")
             XCTAssert(!url.isEmpty, "URL should not be empty")
             try await storageRepository.deleteImage(with: url)
         } catch {
@@ -45,7 +45,7 @@ final class StorageRepositoryTests: XCTestCase {
         let image = UIImage()
         
         do {
-            _ = try await storageRepository.uploadImage(image, to: "/profils_image/")
+            _ = try await storageRepository.uploadImage(image, to: "profils_image")
             XCTFail("Uploading image should fails.")
         } catch {
             XCTAssertEqual(error.localizedDescription, URLError(.badURL).localizedDescription)

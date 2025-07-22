@@ -68,7 +68,7 @@ class AddEventViewModel: ObservableObject {
         }
         
         do {
-            let url = try await storageRepository.uploadImage(uiImage, to: "/events/")
+            let url = try await storageRepository.uploadImage(uiImage, to: "events")
             let event = Event(title: title,
                               descrition: description,
                               date: date,
