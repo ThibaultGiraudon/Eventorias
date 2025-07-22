@@ -30,4 +30,12 @@ class EventsRepository {
     func deleteEvent(with id: String) {
         db.document("events/\(id)").delete()
     }
+    
+    func clearDB() async throws {
+        let events = try await self.getEvents()
+        
+        for event in events {
+            self.deleteEvent(with: event.id)
+        }
+    }
 }

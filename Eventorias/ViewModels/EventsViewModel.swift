@@ -34,9 +34,9 @@ class EventsViewModel: ObservableObject {
         filteredEvents.sorted {
             switch sortingBy {
             case .ascending:
-                return $0.date > $1.date
-            case .descending:
                 return $0.date < $1.date
+            case .descending:
+                return $0.date > $1.date
             }
         }
     }
