@@ -17,9 +17,7 @@ struct Event: Codable, Identifiable, Hashable {
     var address: String
     var location: Location
     var creatorID: String
-    var participants: [String] {
-        [creatorID]
-    }
+    var participants: [String] = []
     
     struct Location: Codable, Hashable {
         var latitude: Double

@@ -37,7 +37,7 @@ struct ContentView: View {
                 case .addEvent:
                     AddEventView(viewModel: addEventVM)
                 case .detailView(let event):
-                    EventDetailView(event: event)
+                    EventDetailView(event: event, session: session)
                 }
             }
         }

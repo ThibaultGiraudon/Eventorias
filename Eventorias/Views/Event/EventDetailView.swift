@@ -11,15 +11,17 @@ import MapKit
 
 struct EventDetailView: View {
     var event: Event
+    @ObservedObject var session: UserSessionViewModel
     @StateObject var eventVM: EventViewModel
     @State private var creator: User = .init()
-    init(event: Event) {
+    init(event: Event, session: UserSessionViewModel) {
         self.event = event
-        self._eventVM = StateObject(wrappedValue: EventViewModel(event: event))
+        self._eventVM = StateObject(wrappedValue: EventViewModel(event: event, session: session))
+        self.session = session
     }
     
     var body: some View {
-        ScrollView {
+        ScrollView(showsIndicators: false) {
             KFImage(URL(string: event.imageURL))
                 .resizable()
                 .aspectRatio(contentMode: .fit)
@@ -65,6 +67,25 @@ struct EventDetailView: View {
                 }
             }
             .frame(height: 100)
+            Button {
+                Task {
+                    if eventVM.isSubsribe {
+                        await eventVM.removeEvent()
+                    } else {
+                        await eventVM.addEvent()
+                    }
+                }
+            } label: {
+                Text("\(eventVM.isSubsribe ? "Unsubsribe" : "Subscribe")")                    .font(.title3)
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background {
+                        RoundedRectangle(cornerRadius: 4)
+                            .fill(.red)
+                    }
+            }
+            .padding(.top, 22)
         }
         .padding()
         .foregroundStyle(.white)
@@ -87,5 +108,5 @@ struct EventDetailView: View {
         imageURL: "https://firebasestorage.googleapis.com/v0/b/eventorias-df464.firebasestorage.app/o/events%2FEvent%20photo.png?alt=media&token=d8aaf643-c971-46f6-b3b2-e92a34f8356c",
         address: "123 Rue de l'Art, Quartier des Galeries, Paris, 75003, France",
         location: .init(latitude: 48.875226, longitude: 2.303139),
-        creatorID: "123"))
+        creatorID: "123"), session: UserSessionViewModel())
 }

@@ -32,6 +32,8 @@ class UserRepository: UserRepositoryInterface {
             "email": user.email,
             "fullname": user.fullname,
             "imageURL": user.imageURL,
+            "createdEvents": user.createdEvents,
+            "subscribedEvents": user.subscribedEvents,
             "uid": user.uid
         ]
         

@@ -31,11 +31,19 @@ class UserSessionViewModel: ObservableObject {
     /// An optional error message to be displayed in the UI if an operation fails.
     @Published var error: String?
 
+    private var events: [Event] = []
+    var createdEvents: [Event] {
+        events.filter( {$0.creatorID == currentUser?.uid }).sorted(by: { $0.date > $1.date })
+    }
+    var subscribedEvents: [Event] {
+        events.filter( { $0.participants.contains(currentUser?.uid ?? "unknow") }).sorted(by: { $0.date > $1.date })
+    }
     // MARK: - Private Propeties
     
     private let userRepository: UserRepositoryInterface
     private let authRepository: AuthRepositoryInterface
     private let storageRepository: StorageRepository
+    private let eventsRepository: EventsRepository = .init()
 
     // MARK: - Initializer
     
@@ -66,6 +74,7 @@ class UserSessionViewModel: ObservableObject {
                 error = "User not found"
                 return
             }
+            events = try await eventsRepository.getEvents()
             self.currentUser = user
             self.isLoggedIn = true
         } catch {
@@ -125,19 +134,48 @@ class UserSessionViewModel: ObservableObject {
         }
     }
     
-    func addEvent(_ event: Event, to type: AddEventTo) {
+    func addEvent(_ event: Event, to type: EventsType) async {
         guard var user = currentUser else {
             self.error = "User not logged in"
             return
         }
         switch type {
         case .created:
-            user.createdEvents.append(event)
+            user.createdEvents.append(event.id)
         case .subscribed:
-            user.subscribedEvents.append(event)
+            user.subscribedEvents.append(event.id)
         }
-        userRepository.setUser(user)
-        self.currentUser = user
+        do {
+            userRepository.setUser(user)
+            self.currentUser = user
+            var editedEvent = event
+            editedEvent.participants.append(user.uid)
+            try eventsRepository.setEvent(editedEvent)
+            events = try await eventsRepository.getEvents()
+        } catch {
+            self.error = "Failed to get events."
+        }
+    }
+    
+    func removeEvent(_ event: Event) async {
+        guard var user = currentUser else {
+            self.error = "User not logged in"
+            return
+        }
+        
+        do {
+            if user.subscribedEvents.contains(event.id) {
+                user.subscribedEvents.removeAll(where: { $0 == event.id })
+                userRepository.setUser(user)
+                self.currentUser = user
+                var editedEvent = event
+                editedEvent.participants.removeAll(where: { $0 == user.uid })
+                try eventsRepository.setEvent(editedEvent)
+                events = try await eventsRepository.getEvents()
+            }
+        } catch {
+            self.error = "Failed to get events."
+        }
     }
 
     /// Logs out the current user and clears the session state.
@@ -147,6 +185,6 @@ class UserSessionViewModel: ObservableObject {
     }
 }
 
-enum AddEventTo {
+enum EventsType {
     case created, subscribed
 }

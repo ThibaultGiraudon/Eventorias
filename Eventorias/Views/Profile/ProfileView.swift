@@ -12,6 +12,9 @@ struct ProfileView: View {
     @ObservedObject var session: UserSessionViewModel
     @State private var fullname: String
     @State private var email: String
+    @State private var selectedEvents: EventsType = .created
+    
+    @EnvironmentObject var coordinator: AppCoordinator
     
     var shouldDisable: Bool {
         (fullname == session.currentUser?.fullname && email == session.currentUser?.email) || fullname.isEmpty || email.isEmpty
@@ -23,7 +26,7 @@ struct ProfileView: View {
         self.email = session.currentUser?.email ?? ""
     }
     var body: some View {
-        if session.currentUser != nil {
+        if let user = session.currentUser {
             VStack {
                 HStack {
                     Text("User profile")
@@ -37,6 +40,51 @@ struct ProfileView: View {
                 CustomTextField(title: "E-mail", label: "", text: $email)
                     .keyboardType(.emailAddress)
                     .textInputAutocapitalization(.never)
+                HStack {
+                    Text("My events")
+                        .padding(.vertical, 8)
+                        .padding(.horizontal, 16)
+                        .background {
+                            Capsule()
+                                .fill(Color("CustomGray").opacity(selectedEvents == .created ? 1.0 : 0.5))
+                        }
+                        .onTapGesture {
+                            selectedEvents = .created
+                        }
+                    
+                    Text("Subsribed events")
+                        .padding(.vertical, 8)
+                        .padding(.horizontal, 16)
+                        .background {
+                            Capsule()
+                                .fill(Color("CustomGray").opacity(selectedEvents == .subscribed ? 1.0 : 0.5))
+                        }
+                        .onTapGesture {
+                            selectedEvents = .subscribed
+                        }
+                }
+                .foregroundStyle(.white)
+                .padding(.top, 22)
+                switch selectedEvents {
+                case .created:
+                    ScrollView(showsIndicators: false) {
+                        ForEach(session.createdEvents) { event in
+                            EventRowView(event: event)
+                                .onTapGesture {
+                                    coordinator.goToDetailView(for: event)
+                                }
+                        }
+                    }
+                case .subscribed:
+                    ScrollView(showsIndicators: false) {
+                        ForEach(session.subscribedEvents) { event in
+                            EventRowView(event: event)
+                                .onTapGesture {
+                                    coordinator.goToDetailView(for: event)
+                                }
+                        }
+                    }
+                }
                 Spacer()
                 Button {
                     Task {

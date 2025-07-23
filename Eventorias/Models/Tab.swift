@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum Tab: String, CaseIterable {
+enum TabItem: String, CaseIterable {
     case events, profile
     
     var icon: String {

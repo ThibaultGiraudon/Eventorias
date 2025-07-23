@@ -13,8 +13,8 @@ struct User: Hashable {
     var email: String
     var fullname: String
     var imageURL: String
-    var createdEvents: [Event] = []
-    var subscribedEvents: [Event] = []
+    var createdEvents: [String] = []
+    var subscribedEvents: [String] = []
     
     let defaultImage: String = "https://firebasestorage.googleapis.com/v0/b/eventorias-df464.firebasestorage.app/o/profils_image%2Fdefault-profile-image.jpg?alt=media&token=c9a78295-2ad4-4acf-872d-c193116783c5"
         
@@ -40,8 +40,8 @@ struct User: Hashable {
         guard let data = document.data(),
               let email = data["email"] as? String,
               let fullname = data["fullname"] as? String,
-              let createdEvents = data["createdEvents"] as? [Event],
-              let subscribedEvents = data["subscribedEvents"] as? [Event] else {
+              let createdEvents = data["createdEvents"] as? [String],
+              let subscribedEvents = data["subscribedEvents"] as? [String] else {
             return nil
         }
 

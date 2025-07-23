@@ -14,7 +14,7 @@ struct EventRowView: View {
     @State private var creator: User = .init()
     init(event: Event) {
         self.event = event
-        self._eventVM = StateObject(wrappedValue: EventViewModel(event: event))
+        self._eventVM = StateObject(wrappedValue: EventViewModel(event: event, session: UserSessionViewModel()))
     }
     
     var body: some View {

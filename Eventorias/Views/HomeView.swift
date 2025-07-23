@@ -11,7 +11,7 @@ struct HomeView: View {
     @ObservedObject var session: UserSessionViewModel
     @ObservedObject var authVM: AuthenticationViewModel
     @ObservedObject var eventsVM: EventsViewModel
-    @State private var selectedTab: Tab = .events
+    @State private var selectedTab: TabItem = .events
     var body: some View {
         VStack {
             switch authVM.authenticationState {
@@ -28,7 +28,7 @@ struct HomeView: View {
                         ProfileView(session: session)
                     }
                     HStack(spacing: 33) {
-                        ForEach(Tab.allCases, id: \.self) { tab in
+                        ForEach(TabItem.allCases, id: \.self) { tab in
                             VStack {
                                 Image(systemName: tab.icon)
                                     .font(.title)

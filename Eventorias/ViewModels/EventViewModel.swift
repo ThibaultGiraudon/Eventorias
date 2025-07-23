@@ -9,15 +9,19 @@ import Foundation
 import SwiftUI
 import MapKit
 
+@MainActor
 class EventViewModel: ObservableObject {
     @Published var event: Event
     @Published var location: Location
     @Published var position: MapCameraPosition
-//    @Published var creator: User = User()
+    var isSubsribe: Bool {
+        session.currentUser?.subscribedEvents.contains(event.id) ?? false
+    }
     
     private let userRepository: UserRepository = .init()
+    private let session: UserSessionViewModel
     
-    init(event: Event) {
+    init(event: Event, session: UserSessionViewModel) {
         self.event = event
         self.location = Location(coordinate: .init(latitude: event.location.latitude, longitude: event.location.longitude))
         self.position = MapCameraPosition.region(
@@ -25,6 +29,7 @@ class EventViewModel: ObservableObject {
              center: CLLocationCoordinate2D(latitude: event.location.latitude, longitude: event.location.longitude),
              span: MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005))
         )
+        self.session = session
     }
     
     @MainActor
@@ -36,5 +41,15 @@ class EventViewModel: ObservableObject {
             print(error)
         }
         return User(uid: "nil", email: "unknow", fullname: "unknow", imageURL: nil)
+    }
+    
+    @MainActor
+    func addEvent() async {
+        await session.addEvent(event, to: .subscribed)
+    }
+    
+    @MainActor
+    func removeEvent() async {
+        await session.removeEvent(event)
     }
 }
