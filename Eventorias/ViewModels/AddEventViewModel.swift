@@ -14,6 +14,12 @@ struct Location: Identifiable {
     var coordinate: CLLocationCoordinate2D
 }
 
+protocol CLGeocoderInterface {
+    func geocodeAddressString(_ address: String) async throws -> [CLPlacemark]
+}
+
+extension CLGeocoder: CLGeocoderInterface { }
+
 class AddEventViewModel: ObservableObject {
     @Published var title: String = ""
     @Published var description: String = ""
@@ -36,9 +42,11 @@ class AddEventViewModel: ObservableObject {
     private let eventRepository: EventsRepository = .init()
     private let storageRepository: StorageRepository = .init()
     private let session: UserSessionViewModel
+    private let geocoder: CLGeocoderInterface
     
-    init(session: UserSessionViewModel) {
+    init(session: UserSessionViewModel, geocoder: CLGeocoderInterface = CLGeocoder()) {
         self.session = session
+        self.geocoder = geocoder
     }
     
     @MainActor
@@ -89,7 +97,6 @@ class AddEventViewModel: ObservableObject {
     @MainActor
     func geocodeAddress() async {
         do {
-            let geocoder = CLGeocoder()
             let placemarks = try await geocoder.geocodeAddressString(address)
             guard let placemark = placemarks.first, let location = placemark.location else {
                 self.error = "Failed to find address"
@@ -97,8 +104,6 @@ class AddEventViewModel: ObservableObject {
             }
             let newCoordinate = location.coordinate
             self.location = Location(coordinate: .init(latitude: newCoordinate.latitude, longitude: newCoordinate.longitude))
-            print(location.coordinate.latitude)
-            print(location.coordinate.longitude)
             self.position = MapCameraPosition.region(
                 MKCoordinateRegion(
                     center: CLLocationCoordinate2D(latitude: newCoordinate.latitude, longitude: newCoordinate.longitude),

@@ -10,13 +10,13 @@ import XCTest
 
 final class EventsViewModelTests: XCTestCase {
     
-    override func setUp() async throws {
-        try await super.setUp()
-        
-        try await EventsRepository().clearDB()
-    }
-    
     func testFetchEventsShouldSucceed() async {
+        do {
+            try await EventsRepository().clearDB()
+        } catch {
+            XCTFail("fail")
+        }
+        
         let events: [Event] = [
             Event(
                   title: "Grand Prix Belgique",

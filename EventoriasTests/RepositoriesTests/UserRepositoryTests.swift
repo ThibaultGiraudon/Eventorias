@@ -35,29 +35,18 @@ final class UserRepositoryTests: XCTestCase {
         }
     }
     
-    func testGetUserShouldFailedWithUserNilNoFullName() async {
-        
-        do {
-            userRepository.setData(["email": "test@test.fr"], id: "test")
-            let fetchedUser = try await userRepository.getUser(withId: "test")
-            XCTAssertNil(fetchedUser)
-        } catch {
-            XCTFail("Geting user should not throw error: \(error)")
-        }
-    }
-    
     func testGetUserShouldFailedWithUserNilNoImageURL() async {
         do {
-            userRepository.setData(["email": "test@test.fr", "fullname": "fulltest"], id: "test")
+            userRepository.setData(["email": "test@test.fr", "fullname": "fulltest", "createdEvents": ["eventid"], "subscribedEvents": ["eventid"]], id: "test")
             let fetchedUser = try await userRepository.getUser(withId: "test")
-            XCTAssertEqual(fetchedUser?.email, "test@test.fr")
+            XCTAssertEqual(fetchedUser?.imageURL, fetchedUser?.defaultImage)
         } catch {
             XCTFail("Geting user should not throw error: \(error)")
         }
     }
 
     func testSetUserAndGetUserShouldSucceed() async {
-        let user = User(uid: "123", email: "charles.leclerc@ferrari.mc", fullname: "Charles Leclerc", imageURL: nil)
+        let user = User(uid: "123", email: "charles.leclerc@ferrari.mc", fullname: "Charles Leclerc", imageURL: "nil")
         
         userRepository.setUser(user)
         

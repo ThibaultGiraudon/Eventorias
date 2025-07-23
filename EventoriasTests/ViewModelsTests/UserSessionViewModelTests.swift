@@ -183,6 +183,25 @@ final class UserSessionViewModelTests: XCTestCase {
         XCTAssertFalse(session.isLoggedIn)
     }
     
+    @MainActor
+    func testAddEventShouldFailedUserNotLogged() async {
+        let session = UserSessionViewModel()
+        
+        await session.addEvent(Event(title: "", descrition: "", date: .now, hour: .now, imageURL: "", address: "", location: .init(latitude: 0, longitude: 0), creatorID: ""), to: .created)
+        
+        XCTAssertEqual(session.error, "User not logged in")
+    }
+    
+    @MainActor
+    func testRemoveEventShouldFailedWithUserNotLogged() async {
+        let session = UserSessionViewModel()
+        var event = Event(title: "", descrition: "", date: .now, hour: .now, imageURL: "", address: "", location: .init(latitude: 0, longitude: 0), creatorID: "")
+        
+        await session.removeEvent(event)
+        
+        XCTAssertEqual(session.error, "User not logged in")
+    }
+    
     func loadImage(named name: String) -> UIImage? {
         let bundle = Bundle(for: type(of: self))
         guard let url = bundle.url(forResource: name, withExtension: nil),

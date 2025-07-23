@@ -7,13 +7,16 @@
 
 import XCTest
 @testable import Eventorias
+import CoreLocation
+import MapKit
 
 final class AddEventViewModelTests: XCTestCase {
+    
     @MainActor
-    func testShouldDisable() {
+    func testShouldDisable() async {
         let session = UserSessionViewModel()
         session.currentUser = User(uid: "123", email: "user@test.com", fullname: "User Test", imageURL: nil)
-        let viewModel = AddEventViewModel(session: session)
+        let viewModel = AddEventViewModel(session: session, geocoder: CLGeocoderFake())
         
         XCTAssertTrue(viewModel.shouldDisable)
         viewModel.title = "title"
@@ -32,36 +35,40 @@ final class AddEventViewModelTests: XCTestCase {
     
     @MainActor
     func testAddEventShouldSucceed() async {
-        let session = UserSessionViewModel()
-        session.currentUser = User(uid: "123", email: "user@test.com", fullname: "User Test", imageURL: nil)
-        let viewModel = AddEventViewModel(session: session)
-        
-        viewModel.title = "title"
-        viewModel.description = "description"
-        viewModel.date = "08/17/2003"
-        viewModel.hour = "10:00"
-        viewModel.address = "ici"
-        viewModel.uiImage = loadImage(named: "charles-leclerc.jpg")
-        viewModel.location = Location(coordinate: .init(latitude: 0, longitude: 0))
-        
-        await viewModel.addEvent()
-        
-        let eventsVM = EventsViewModel()
-        await eventsVM.fetchEvents()
-        guard let event = eventsVM.events.first else {
-            XCTFail("Failed to get event")
-            return
+        do {
+            try await EventsRepository().clearDB()
+            let session = UserSessionViewModel()
+            session.currentUser = User(uid: "123", email: "user@test.com", fullname: "User Test", imageURL: nil)
+            let viewModel = AddEventViewModel(session: session, geocoder: CLGeocoderFake())
+            
+            viewModel.title = "title"
+            viewModel.description = "description"
+            viewModel.date = "08/17/2003"
+            viewModel.hour = "10:00"
+            viewModel.address = "ici"
+            viewModel.uiImage = loadImage(named: "charles-leclerc.jpg")
+            viewModel.location = Location(coordinate: .init(latitude: 0, longitude: 0))
+            
+            await viewModel.addEvent()
+            let eventsVM = EventsViewModel()
+            await eventsVM.fetchEvents()
+            guard let event = eventsVM.events.first else {
+                XCTFail("Failed to get event")
+                return
+            }
+            XCTAssertEqual(event.title, "title")
+            XCTAssertEqual(event.descrition, "description")
+            XCTAssertEqual(event.date.toString(format: "MM/dd/yyy"), "08/17/2003")
+        } catch {
+            XCTFail("fail")
         }
-        XCTAssertEqual(event.title, "title")
-        XCTAssertEqual(event.descrition, "description")
-        XCTAssertEqual(event.date.toString(format: "MM/dd/yyy"), "08/17/2003")
     }
     
     @MainActor
     func testAddEventShouldFailedWithBadHourFormat() async {
         let session = UserSessionViewModel()
         session.currentUser = User(uid: "123", email: "user@test.com", fullname: "User Test", imageURL: nil)
-        let viewModel = AddEventViewModel(session: session)
+        let viewModel = AddEventViewModel(session: session, geocoder: CLGeocoderFake())
         
         viewModel.title = "title"
         viewModel.description = "description"
@@ -80,7 +87,7 @@ final class AddEventViewModelTests: XCTestCase {
     func testAddEventShouldFailedWithNoCoordinate() async {
         let session = UserSessionViewModel()
         session.currentUser = User(uid: "123", email: "user@test.com", fullname: "User Test", imageURL: nil)
-        let viewModel = AddEventViewModel(session: session)
+        let viewModel = AddEventViewModel(session: session, geocoder: CLGeocoderFake())
         
         viewModel.title = "title"
         viewModel.description = "description"
@@ -98,7 +105,7 @@ final class AddEventViewModelTests: XCTestCase {
     func testAddEventShouldFailedWithNoUIImage() async {
         let session = UserSessionViewModel()
         session.currentUser = User(uid: "123", email: "user@test.com", fullname: "User Test", imageURL: nil)
-        let viewModel = AddEventViewModel(session: session)
+        let viewModel = AddEventViewModel(session: session, geocoder: CLGeocoderFake())
         
         viewModel.title = "title"
         viewModel.description = "description"
@@ -115,7 +122,7 @@ final class AddEventViewModelTests: XCTestCase {
     @MainActor
     func testAddEventShouldFailedWithNoUser() async {
         let session = UserSessionViewModel()
-        let viewModel = AddEventViewModel(session: session)
+        let viewModel = AddEventViewModel(session: session, geocoder: CLGeocoderFake())
         
         viewModel.title = "title"
         viewModel.description = "description"
@@ -134,7 +141,7 @@ final class AddEventViewModelTests: XCTestCase {
     func testAddEventShouldFailedWithBadURL() async {
         let session = UserSessionViewModel()
         session.currentUser = User(uid: "123", email: "user@test.com", fullname: "User Test", imageURL: nil)
-        let viewModel = AddEventViewModel(session: session)
+        let viewModel = AddEventViewModel(session: session, geocoder: CLGeocoderFake())
         
         viewModel.title = "title"
         viewModel.description = "description"
@@ -151,7 +158,9 @@ final class AddEventViewModelTests: XCTestCase {
     
     @MainActor
     func testGeocodeAddreesShouldSucceed() async {
-        let viewModel = AddEventViewModel(session: UserSessionViewModel())
+        let geocodeFake = CLGeocoderFake()
+        geocodeFake.placemarks = [MKPlacemark(coordinate: .init(latitude: 48.8654067, longitude: 2.3388291))]
+        let viewModel = AddEventViewModel(session: UserSessionViewModel(), geocoder: geocodeFake)
         viewModel.address = "123 Rue de l’Art, Quartier des Galeries, Paris, 75003, France"
         await viewModel.geocodeAddress()
         
@@ -165,9 +174,21 @@ final class AddEventViewModelTests: XCTestCase {
     }
     
     @MainActor
-    func testGeocodeAddreesShouldFailed() async {
-        let viewModel = AddEventViewModel(session: UserSessionViewModel())
-        viewModel.address = "fghjkl;lkjhgfcghjkl;kjhgfdfghjklkjhgfd"
+    func testGeocodeAddreesShouldFailedWithEmptyPlacemark() async {
+        let geocoderFake = CLGeocoderFake()
+        let viewModel = AddEventViewModel(session: UserSessionViewModel(), geocoder: geocoderFake)
+        viewModel.address = ""
+        await viewModel.geocodeAddress()
+        
+        XCTAssertEqual(viewModel.error, "Failed to find address")
+    }
+    
+    @MainActor
+    func testGeocodeAddreesShouldFailedWithError() async {
+        let geocoderFake = CLGeocoderFake()
+        geocoderFake.error = URLError(.badURL)
+        let viewModel = AddEventViewModel(session: UserSessionViewModel(), geocoder: geocoderFake)
+        viewModel.address = ""
         await viewModel.geocodeAddress()
         
         XCTAssertEqual(viewModel.error, "Failed to find address")
