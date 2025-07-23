@@ -13,6 +13,8 @@ struct User: Hashable {
     var email: String
     var fullname: String
     var imageURL: String
+    var createdEvents: [Event] = []
+    var subscribedEvents: [Event] = []
     
     let defaultImage: String = "https://firebasestorage.googleapis.com/v0/b/eventorias-df464.firebasestorage.app/o/profils_image%2Fdefault-profile-image.jpg?alt=media&token=c9a78295-2ad4-4acf-872d-c193116783c5"
         
@@ -37,13 +39,17 @@ struct User: Hashable {
     init?(document: DocumentSnapshot) {
         guard let data = document.data(),
               let email = data["email"] as? String,
-              let fullname = data["fullname"] as? String else {
+              let fullname = data["fullname"] as? String,
+              let createdEvents = data["createdEvents"] as? [Event],
+              let subscribedEvents = data["subscribedEvents"] as? [Event] else {
             return nil
         }
 
         self.uid = document.documentID
         self.email = email
         self.fullname = fullname
+        self.createdEvents = createdEvents
+        self.subscribedEvents = subscribedEvents
         self.imageURL = data["imageURL"] as? String ?? "https://firebasestorage.googleapis.com/v0/b/eventorias-df464.firebasestorage.app/o/profils_image%2Fdefault-profile-image.jpg?alt=media&token=c9a78295-2ad4-4acf-872d-c193116783c5"
     }
 }
