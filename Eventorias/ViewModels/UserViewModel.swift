@@ -84,15 +84,16 @@ class UserSessionViewModel: ObservableObject {
     ///   - fullname: The new  full name.
     ///   - imageURL: The new  image URL.
     func updateUser(email: String, fullname: String) async {
-        guard let user = currentUser else {
+        guard var user = currentUser else {
             self.error = "User not logged in"
             return
         }
-        let updatedUser = User(uid: user.uid, email: email, fullname: fullname, imageURL: user.imageURL)
+        user.email = email
+        user.fullname = fullname
         do {
             try await authRepository.editUser(email: email)
-            userRepository.setUser(updatedUser)
-            self.currentUser = updatedUser
+            userRepository.setUser(user)
+            self.currentUser = user
         } catch {
             self.error = error.localizedDescription
         }
@@ -103,7 +104,7 @@ class UserSessionViewModel: ObservableObject {
     ///
     /// - Parameter image: The `UIImage` to save.
     func uploadImage(_ image: UIImage) async {
-        guard let user = currentUser else {
+        guard var user = currentUser else {
             self.error = "User not logged in"
             return
         }
@@ -111,17 +112,32 @@ class UserSessionViewModel: ObservableObject {
             let currentImageURL = user.imageURL
             let imageURL = try await storageRepository.uploadImage(image, to: "profils_image")
             print("Successfuly uploaded image")
-            let updatedUser = User(uid: user.uid, email: user.email, fullname: user.fullname, imageURL: imageURL)
-            userRepository.setUser(updatedUser)
+            user.imageURL = imageURL
+            userRepository.setUser(user)
             if currentImageURL != user.defaultImage {
                 try await storageRepository.deleteImage(with: currentImageURL)
             }
-            self.currentUser = updatedUser
+            self.currentUser = user
             print("Successfuly updated user")
         } catch {
             self.error = "Failed to upload image"
             return
         }
+    }
+    
+    func addEvent(_ event: Event, to type: AddEventTo) {
+        guard var user = currentUser else {
+            self.error = "User not logged in"
+            return
+        }
+        switch type {
+        case .created:
+            user.createdEvents.append(event)
+        case .subscribed:
+            user.subscribedEvents.append(event)
+        }
+        userRepository.setUser(user)
+        self.currentUser = user
     }
 
     /// Logs out the current user and clears the session state.
@@ -129,4 +145,8 @@ class UserSessionViewModel: ObservableObject {
         self.currentUser = nil
         self.isLoggedIn = false
     }
+}
+
+enum AddEventTo {
+    case created, subscribed
 }

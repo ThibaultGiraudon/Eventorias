@@ -78,6 +78,7 @@ class AddEventViewModel: ObservableObject {
                               location: .init(latitude: coordinate.latitude, longitude: coordinate.longitude),
                               creatorID: user.uid)
             try eventRepository.setEvent(event)
+            session.addEvent(event, to: .created)
         } catch {
             self.error = error.localizedDescription
             print(error.localizedDescription)
