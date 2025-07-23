@@ -51,27 +51,30 @@ class AddEventViewModel: ObservableObject {
     
     @MainActor
     func addEvent() async {
+        self.session.error = nil
         self.error = nil
-        guard let date = self.date.toDate(), let hour = self.hour.toHour() else {
-            self.error = "Bad date format."
-            print("date error")
+        guard let date = self.date.toDate() else {
+            self.error = "Bad date format (should be MM/DD/YYYY)."
             return
         }
         
+        guard let hour = self.hour.toHour() else {
+            self.error = "Bad hour format (should be HH:MM)."
+            return
+        }
+                
         guard let coordinate = location?.coordinate else {
-            self.error = "Failed to get address"
+            self.error = "Failed to get address."
             return
         }
         
         guard let uiImage = self.uiImage else {
             self.error = "Can't find image."
-            print("image error")
             return
         }
         
         guard let user = session.currentUser else {
             self.error = "User not logged in."
-            print("user error")
             return
         }
         
@@ -89,17 +92,18 @@ class AddEventViewModel: ObservableObject {
             await session.addEvent(event, to: .created)
             await session.addEvent(event, to: .subscribed)
         } catch {
-            self.error = error.localizedDescription
-            print(error.localizedDescription)
+            self.session.error = "creating a new event"
         }
     }
     
     @MainActor
     func geocodeAddress() async {
+        self.error = nil
         do {
             let placemarks = try await geocoder.geocodeAddressString(address)
             guard let placemark = placemarks.first, let location = placemark.location else {
                 self.error = "Failed to find address"
+                self.location = nil
                 return
             }
             let newCoordinate = location.coordinate
@@ -110,6 +114,7 @@ class AddEventViewModel: ObservableObject {
                     span: MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005))
             )
         } catch {
+            self.location = nil
             self.error = "Failed to find address"
         }
     }

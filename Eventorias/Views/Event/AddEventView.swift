@@ -15,6 +15,7 @@ struct AddEventView: View {
     @State private var isCameraPresented: Bool = false
     @State private var selectedItem: PhotosPickerItem?
     @EnvironmentObject var coordinator: AppCoordinator
+    @FocusState private var focused
     var body: some View {
         VStack {
             ScrollView {
@@ -26,9 +27,12 @@ struct AddEventView: View {
                         CustomTextField(title: "Time", label: "HH:MM", text: $viewModel.hour)
                     }
                     CustomTextField(title: "Address", label: "Enter full address", text: $viewModel.address)
-                        .onSubmit {
-                            Task {
-                                await viewModel.geocodeAddress()
+                        .focused($focused)
+                        .onChange(of: focused) { in
+                            if !focused {
+                                Task {
+                                    await viewModel.geocodeAddress()
+                                }
                             }
                         }
                 }
@@ -77,7 +81,9 @@ struct AddEventView: View {
             Button {
                 Task {
                     await viewModel.addEvent()
-                    coordinator.resetNavigation()
+                    if viewModel.error == nil {
+                        coordinator.resetNavigation()
+                    }
                 }
             } label: {
                 Text("Validate")
@@ -93,6 +99,14 @@ struct AddEventView: View {
             }
             .disabled(viewModel.shouldDisable)
         }
+        .overlay(alignment: .bottom, content: {
+            if let error = viewModel.error {
+                Text(error)
+                    .frame(maxWidth: .infinity)
+                    .background(.red)
+                    .foregroundStyle(.white)
+            }
+        })
         .background {
             Color("background")
                 .ignoresSafeArea()

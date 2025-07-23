@@ -195,7 +195,7 @@ final class UserSessionViewModelTests: XCTestCase {
     @MainActor
     func testRemoveEventShouldFailedWithUserNotLogged() async {
         let session = UserSessionViewModel()
-        var event = Event(title: "", descrition: "", date: .now, hour: .now, imageURL: "", address: "", location: .init(latitude: 0, longitude: 0), creatorID: "")
+        let event = Event(title: "", descrition: "", date: .now, hour: .now, imageURL: "", address: "", location: .init(latitude: 0, longitude: 0), creatorID: "")
         
         await session.removeEvent(event)
         

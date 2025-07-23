@@ -62,6 +62,7 @@ class AuthenticationViewModel: ObservableObject {
     /// - Parameter completion: A closure called upon successful authentication.
     func signIn() async throws {
         authenticationState = .signingIn
+        self.error = nil
         do {
             let uid = try await authRepository.authenticate(email: email, password: password)
             await session.loadUser(by: uid)
@@ -81,6 +82,7 @@ class AuthenticationViewModel: ObservableObject {
     /// - Parameter completion: A closure called upon successful registration.
     func register() async throws {
         self.authenticationState = .signingIn
+        self.error = nil
         do {
             let uid = try await authRepository.register(email: email, password: password)
             let newUser = User(uid: uid, email: email, fullname: fullname, imageURL: nil)
@@ -98,6 +100,7 @@ class AuthenticationViewModel: ObservableObject {
 
     /// Signs out the current user and clears the `UserSessionViewModel`.
     func signOut() async {
+        self.error = nil
         do {
             try authRepository.signOut()
         } catch {

@@ -34,11 +34,12 @@ class EventViewModel: ObservableObject {
     
     @MainActor
     func getUser(with id: String) async -> User {
+        self.session.error = nil
         do {
             return try await userRepository.getUser(withId: id)
                 ?? User(uid: "nil", email: "unknow", fullname: "unknow", imageURL: nil)
         } catch {
-            print(error)
+            self.session.error = "getting event's owner"
         }
         return User(uid: "nil", email: "unknow", fullname: "unknow", imageURL: nil)
     }

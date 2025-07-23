@@ -12,6 +12,7 @@ struct HomeView: View {
     @ObservedObject var authVM: AuthenticationViewModel
     @ObservedObject var eventsVM: EventsViewModel
     @State private var selectedTab: TabItem = .events
+    @State private var activeError: String?
     var body: some View {
         VStack {
             switch authVM.authenticationState {
@@ -21,11 +22,20 @@ struct HomeView: View {
                 ProgressView()
             case .signedIn:
                 VStack {
-                    switch selectedTab {
-                    case .events:
-                        EventsListView(eventsVM: eventsVM)
-                    case .profile:
-                        ProfileView(session: session)
+                    if let error = activeError {
+                        ErrorView(error: error) {
+                            Task {
+                                await eventsVM.fetchEvents()
+                                activeError = nil
+                            }
+                        }
+                    } else {
+                        switch selectedTab {
+                        case .events:
+                            EventsListView(eventsVM: eventsVM)
+                        case .profile:
+                            ProfileView(session: session)
+                        }
                     }
                     HStack(spacing: 33) {
                         ForEach(TabItem.allCases, id: \.self) { tab in
@@ -48,6 +58,8 @@ struct HomeView: View {
                 }
             }
         }
+        .onReceive(session.$error) { if let err = $0 { activeError = err} }
+        .onReceive(eventsVM.$error) { if let err = $0 { activeError = err} }
     }
 }
 

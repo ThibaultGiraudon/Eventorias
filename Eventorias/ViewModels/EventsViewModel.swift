@@ -13,6 +13,7 @@ class EventsViewModel: ObservableObject {
     @Published var searchText: String = ""
     @Published var sortingBy: SortingOrder = .ascending
     @Published var filterBy: FilterType = .date
+    @Published var error: String?
     var filteredEvents: [Event] {
         events.filter { event in
             if searchText.isEmpty {
@@ -46,10 +47,11 @@ class EventsViewModel: ObservableObject {
     @MainActor
     func fetchEvents() async {
         self.isLoading = true
+        self.error = nil
         do {
             events = try await eventsRepository.getEvents()
         } catch {
-            print(error)
+            self.error = error.localizedDescription
         }
         self.isLoading = false
     }

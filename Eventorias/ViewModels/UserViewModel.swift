@@ -71,14 +71,14 @@ class UserSessionViewModel: ObservableObject {
 
         do {
             guard let user = try await userRepository.getUser(withId: uid) else {
-                error = "User not found"
+                self.error = "retreiving personnal information"
                 return
             }
             events = try await eventsRepository.getEvents()
             self.currentUser = user
             self.isLoggedIn = true
         } catch {
-            self.error = error.localizedDescription
+            self.error = "retreiving personnal information"
         }
     }
     
@@ -104,7 +104,7 @@ class UserSessionViewModel: ObservableObject {
             userRepository.setUser(user)
             self.currentUser = user
         } catch {
-            self.error = error.localizedDescription
+            self.error = "updating user's personnal information"
         }
     }
     
@@ -120,16 +120,14 @@ class UserSessionViewModel: ObservableObject {
         do {
             let currentImageURL = user.imageURL
             let imageURL = try await storageRepository.uploadImage(image, to: "profils_image")
-            print("Successfuly uploaded image")
             user.imageURL = imageURL
             userRepository.setUser(user)
             if currentImageURL != user.defaultImage {
                 try await storageRepository.deleteImage(with: currentImageURL)
             }
             self.currentUser = user
-            print("Successfuly updated user")
         } catch {
-            self.error = "Failed to upload image"
+            self.error = "uploading new user's profile picture"
             return
         }
     }
@@ -153,7 +151,7 @@ class UserSessionViewModel: ObservableObject {
             try eventsRepository.setEvent(editedEvent)
             events = try await eventsRepository.getEvents()
         } catch {
-            self.error = "Failed to get events."
+            self.error = "subscribing to the event"
         }
     }
     
@@ -174,7 +172,7 @@ class UserSessionViewModel: ObservableObject {
                 events = try await eventsRepository.getEvents()
             }
         } catch {
-            self.error = "Failed to get events."
+            self.error = "unsubscribing to the event"
         }
     }
 

@@ -26,7 +26,7 @@ struct ProfileView: View {
         self.email = session.currentUser?.email ?? ""
     }
     var body: some View {
-        if let user = session.currentUser {
+        if session.currentUser != nil {
             VStack {
                 HStack {
                     Text("User profile")
