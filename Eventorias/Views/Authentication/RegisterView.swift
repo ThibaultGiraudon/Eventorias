@@ -68,6 +68,7 @@ struct RegisterView: View {
                 }
             }
             .disabled(shouldDisable)
+            .accessibilityHint(shouldDisable ? "Button disable, fill out all the fields" : "Double-tap to create an account")
             Spacer()
             Spacer()
         }
@@ -78,6 +79,10 @@ struct RegisterView: View {
                     .frame(maxWidth: .infinity)
                     .background(Color("CustomRed"))
                     .foregroundStyle(.white)
+                    .accessibilityHidden(true)
+                    .onAppear {
+                        UIAccessibility.post(notification: .announcement, argument: error)
+                    }
             }
         })
         .background {

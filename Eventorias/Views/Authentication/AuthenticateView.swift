@@ -12,8 +12,11 @@ struct AuthenticateView: View {
     var body: some View {
         VStack {
             Spacer()
-            Image("logo")
-            Image("title")
+            Group {
+                Image("logo")
+                Image("title")
+            }
+            .accessibilityHidden(true)
             Button {
                 coordinator.goToMail()
             } label: {

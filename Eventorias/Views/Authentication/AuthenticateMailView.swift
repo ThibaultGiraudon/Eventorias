@@ -18,8 +18,11 @@ struct AuthenticateMailView: View {
     var body: some View {
         VStack {
             Spacer()
-            Image("logo")
-            Image("title")
+            Group {
+                Image("logo")
+                Image("title")
+            }
+            .accessibilityHidden(true)
             .padding(.bottom, 64)
             Group {
                 TextField(text: $authVM.email) {
@@ -44,7 +47,9 @@ struct AuthenticateMailView: View {
             Button {
                 Task {
                     await authVM.signIn()
-                    coordinator.resetNavigation()
+                    if authVM.authenticationState == .signedIn {
+                        coordinator.resetNavigation()
+                    }
                 }
             } label: {
                 Text("Sign in")
@@ -58,6 +63,7 @@ struct AuthenticateMailView: View {
             }
             .padding(.top)
             .disabled(shouldDisable)
+            .accessibilityHint(shouldDisable ? "Button disable, fill out all the fields" : "Double-tap to sign in")
             Button {
                 coordinator.goToRegister()
             } label: {
@@ -70,6 +76,9 @@ struct AuthenticateMailView: View {
                         .stroke(lineWidth: 2)
                         .fill(Color("CustomRed"))
                 }
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel("Bouton to create an account")
+                .accessibilityHint("Double-tap to display account creation form")
             }
             Spacer()
             Spacer()
@@ -81,6 +90,10 @@ struct AuthenticateMailView: View {
                     .frame(maxWidth: .infinity)
                     .background(Color("CustomRed"))
                     .foregroundStyle(.white)
+                    .accessibilityHidden(true)
+                    .onAppear {
+                        UIAccessibility.post(notification: .announcement, argument: error)
+                    }
             }
         })
         .background {
