@@ -42,7 +42,11 @@ class EventsViewModel: ObservableObject {
         }
     }
     
-    private let eventsRepository: EventsRepository = .init()
+    private let eventsRepository: EventsRepositoryInterface
+    
+    init(eventsRepository: EventsRepositoryInterface = EventsRepository()) {
+        self.eventsRepository = eventsRepository
+    }
     
     @MainActor
     func fetchEvents() async {
@@ -51,7 +55,7 @@ class EventsViewModel: ObservableObject {
         do {
             events = try await eventsRepository.getEvents()
         } catch {
-            self.error = error.localizedDescription
+            self.error = "fetching events"
         }
         self.isLoading = false
     }

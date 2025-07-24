@@ -35,33 +35,47 @@ final class AddEventViewModelTests: XCTestCase {
     
     @MainActor
     func testAddEventShouldSucceed() async {
-        do {
-            try await EventsRepository().clearDB()
-            let session = UserSessionViewModel()
-            session.currentUser = User(uid: "123", email: "user@test.com", fullname: "User Test", imageURL: nil)
-            let viewModel = AddEventViewModel(session: session, geocoder: CLGeocoderFake())
-            
-            viewModel.title = "title"
-            viewModel.description = "description"
-            viewModel.date = "08/17/2003"
-            viewModel.hour = "10:00"
-            viewModel.address = "ici"
-            viewModel.uiImage = loadImage(named: "charles-leclerc.jpg")
-            viewModel.location = Location(coordinate: .init(latitude: 0, longitude: 0))
-            
-            await viewModel.addEvent()
-            let eventsVM = EventsViewModel()
-            await eventsVM.fetchEvents()
-            guard let event = eventsVM.events.first else {
-                XCTFail("Failed to get event")
-                return
-            }
-            XCTAssertEqual(event.title, "title")
-            XCTAssertEqual(event.descrition, "description")
-            XCTAssertEqual(event.date.toString(format: "MM/dd/yyy"), "08/17/2003")
-        } catch {
-            XCTFail("fail")
+        let session = UserSessionViewModel()
+        session.currentUser = User(uid: "123", email: "user@test.com", fullname: "User Test", imageURL: nil)
+        let viewModel = AddEventViewModel(session: session, geocoder: CLGeocoderFake())
+        
+        viewModel.title = "uniquetitle"
+        viewModel.description = "description"
+        viewModel.date = "08/17/2003"
+        viewModel.hour = "10:00"
+        viewModel.address = "ici"
+        viewModel.uiImage = loadImage(named: "charles-leclerc.jpg")
+        viewModel.location = Location(coordinate: .init(latitude: 0, longitude: 0))
+        
+        await viewModel.addEvent()
+        let eventsVM = EventsViewModel()
+        await eventsVM.fetchEvents()
+        guard let event = eventsVM.events.first(where: { $0.title == "uniquetitle"}) else {
+            XCTFail("Failed to get event")
+            return
         }
+        XCTAssertEqual(event.title, "uniquetitle")
+        XCTAssertEqual(event.descrition, "description")
+        XCTAssertEqual(event.date.toString(format: "MM/dd/yyy"), "08/17/2003")
+    }
+    
+    @MainActor
+    func testAddEventShouldFailedWithBadDateFormat() async {
+        let session = UserSessionViewModel()
+        session.currentUser = User(uid: "123", email: "user@test.com", fullname: "User Test", imageURL: nil)
+        let viewModel = AddEventViewModel(session: session, geocoder: CLGeocoderFake())
+        
+        viewModel.title = "title"
+        viewModel.description = "description"
+        viewModel.date = "test"
+        viewModel.hour = "test"
+        viewModel.address = "ici"
+        viewModel.uiImage = loadImage(named: "charles-leclerc.jpg")
+        viewModel.location = Location(coordinate: .init(latitude: 0, longitude: 0))
+        
+        await viewModel.addEvent()
+        
+        XCTAssertEqual(viewModel.error, "Bad date format (should be MM/DD/YYYY).")
     }
     
     @MainActor
@@ -80,7 +94,7 @@ final class AddEventViewModelTests: XCTestCase {
         
         await viewModel.addEvent()
         
-        XCTAssertEqual(viewModel.error, "Bad date format.")
+        XCTAssertEqual(viewModel.error, "Bad hour format (should be HH:MM).")
     }
     
     @MainActor
@@ -98,7 +112,7 @@ final class AddEventViewModelTests: XCTestCase {
         
         await viewModel.addEvent()
         
-        XCTAssertEqual(viewModel.error, "Failed to get address")
+        XCTAssertEqual(viewModel.error, "Failed to get address.")
     }
     
     @MainActor
@@ -153,7 +167,7 @@ final class AddEventViewModelTests: XCTestCase {
         
         await viewModel.addEvent()
         
-        XCTAssertEqual(viewModel.error, URLError(.badURL).localizedDescription)
+        XCTAssertEqual(session.error, "creating a new event")
     }
     
     @MainActor

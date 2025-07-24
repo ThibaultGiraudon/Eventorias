@@ -8,7 +8,7 @@
 import Foundation
 import FirebaseFirestore
 
-class EventsRepository {
+class EventsRepository: EventsRepositoryInterface {
     let db = Firestore.firestore()
     
     func getEvents() async throws -> [Event] {

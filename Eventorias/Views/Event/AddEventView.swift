@@ -28,7 +28,7 @@ struct AddEventView: View {
                     }
                     CustomTextField(title: "Address", label: "Enter full address", text: $viewModel.address)
                         .focused($focused)
-                        .onChange(of: focused) { in
+                        .onChange(of: focused) {
                             if !focused {
                                 Task {
                                     await viewModel.geocodeAddress()

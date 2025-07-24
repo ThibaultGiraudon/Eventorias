@@ -31,7 +31,7 @@ class UserSessionViewModel: ObservableObject {
     /// An optional error message to be displayed in the UI if an operation fails.
     @Published var error: String?
 
-    private var events: [Event] = []
+    private var events: [Event]
     var createdEvents: [Event] {
         events.filter( {$0.creatorID == currentUser?.uid }).sorted(by: { $0.date > $1.date })
     }
@@ -43,7 +43,7 @@ class UserSessionViewModel: ObservableObject {
     private let userRepository: UserRepositoryInterface
     private let authRepository: AuthRepositoryInterface
     private let storageRepository: StorageRepository
-    private let eventsRepository: EventsRepository = .init()
+    private let eventsRepository: EventsRepositoryInterface
 
     // MARK: - Initializer
     
@@ -54,10 +54,14 @@ class UserSessionViewModel: ObservableObject {
     ///   - authRepository: The authentication repository (default is `AuthRepository()`).
     init(userRepository: UserRepositoryInterface = UserRepository(),
          authRepository: AuthRepositoryInterface = AuthRepository(),
-         storageRepository: StorageRepository = StorageRepository()) {
+         storageRepository: StorageRepository = StorageRepository(),
+         eventsRepository: EventsRepositoryInterface = EventsRepository(),
+         events: [Event] = []) {
         self.userRepository = userRepository
         self.authRepository = authRepository
         self.storageRepository = storageRepository
+        self.eventsRepository = eventsRepository
+        self.events = events
     }
 
     // MARK: - Methods

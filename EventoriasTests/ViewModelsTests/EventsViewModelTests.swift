@@ -10,13 +10,7 @@ import XCTest
 
 final class EventsViewModelTests: XCTestCase {
     
-    func testFetchEventsShouldSucceed() async {
-        do {
-            try await EventsRepository().clearDB()
-        } catch {
-            XCTFail("fail")
-        }
-        
+    func testFetchEventsShouldSucceed() async {        
         let events: [Event] = [
             Event(
                   title: "Grand Prix Belgique",
@@ -78,5 +72,15 @@ final class EventsViewModelTests: XCTestCase {
         } catch {
             XCTFail("An error occured: \(error)")
         }
+    }
+    
+    @MainActor
+    func testFetchEventsShouldFailedWithError() async {
+        let eventsRepositoryFake = EventsRepositoryFake()
+        eventsRepositoryFake.error = URLError(.badURL)
+        let eventsVM = EventsViewModel(eventsRepository: eventsRepositoryFake)
+        
+        await eventsVM.fetchEvents()
+        XCTAssertEqual(eventsVM.error, "fetching events")
     }
 }
