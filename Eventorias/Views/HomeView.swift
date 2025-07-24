@@ -50,6 +50,9 @@ struct HomeView: View {
                             .onTapGesture {
                                 selectedTab = tab
                             }
+                            .accessibilityElement(children: .ignore)
+                            .accessibilityLabel(tab.rawValue)
+                            .accessibilityHint(selectedTab == tab ? "" : "Double-tap to open \(tab.rawValue) view")
                         }
                     }
                     .frame(maxWidth: .infinity)

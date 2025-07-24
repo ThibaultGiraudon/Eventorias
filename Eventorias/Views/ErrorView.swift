@@ -12,22 +12,26 @@ struct ErrorView: View {
     var tryAgain: () -> Void
     var body: some View {
         VStack {
-            Image(systemName: "exclamationmark")
-                .font(.largeTitle)
-                .padding(20)
-                .background {
-                    Circle()
-                        .fill(Color("CustomGray"))
-                }
-                .padding(.bottom, 24)
+            Group {
+                Image(systemName: "exclamationmark")
+                    .font(.largeTitle)
+                    .padding(20)
+                    .background {
+                        Circle()
+                            .fill(Color("CustomGray"))
+                    }
+                    .padding(.bottom, 24)
             
-            Text("Error")
-                .font(.title2.bold())
-                .padding(.bottom, 5)
-            Text("An error has occured while:")
-            Text(error)
-                .bold()
-            Text("please try again later")
+                Text("Error")
+                    .font(.title2.bold())
+                    .padding(.bottom, 5)
+                Text("An error has occured while:")
+                Text(error)
+                    .bold()
+                Text("please try again later")
+            }
+            .accessibilityHidden(true)
+            .accessibilityValue("An error has occured while \(error)")
             
             Button(action: tryAgain) {
                 Text("Try again")
@@ -39,6 +43,8 @@ struct ErrorView: View {
                     }
             }
             .padding(.top, 35)
+            .accessibilityElement()
+            .accessibilityHint("Double-tap to try again")
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .foregroundStyle(.white)
