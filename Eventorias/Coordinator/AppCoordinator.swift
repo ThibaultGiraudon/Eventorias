@@ -26,6 +26,12 @@ class AppCoordinator: ObservableObject {
         path.append(.detailView(event: event))
     }
     
+    func dismiss() {
+        if !path.isEmpty {
+            path.removeLast()
+        }
+    }
+    
     func resetNavigation() {
         path = []
     }

@@ -18,6 +18,18 @@ struct AddEventView: View {
     @FocusState private var focused
     var body: some View {
         VStack {
+            HStack {
+                Image(systemName: "arrow.left")
+                    .onTapGesture {
+                        coordinator.dismiss()
+                    }
+                Text("Creation of an event")
+                Spacer()
+            }
+            .font(.title2)
+            .foregroundStyle(.white)
+            .padding(.leading, 16)
+            .padding(.vertical, 24)
             ScrollView {
                 VStack(spacing: 24) {
                     CustomTextField(title: "Title", label: "New event", text: $viewModel.title)
@@ -82,7 +94,7 @@ struct AddEventView: View {
                 Task {
                     await viewModel.addEvent()
                     if viewModel.error == nil {
-                        coordinator.resetNavigation()
+                        coordinator.dismiss()
                     }
                 }
             } label: {
@@ -123,6 +135,8 @@ struct AddEventView: View {
                 }
             }
         }
+        .toolbarVisibility(.hidden)
+        .navigationBarBackButtonHidden()
     }
 }
 
