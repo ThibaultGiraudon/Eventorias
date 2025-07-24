@@ -43,10 +43,13 @@ class EventsViewModel: ObservableObject {
         }
     }
     
+    private var calendar = Calendar.current
+    
     private let eventsRepository: EventsRepositoryInterface
     
     init(eventsRepository: EventsRepositoryInterface = EventsRepository()) {
         self.eventsRepository = eventsRepository
+        self.calendar.timeZone = TimeZone(secondsFromGMT: 0)!
     }
     
     @MainActor
@@ -63,13 +66,13 @@ class EventsViewModel: ObservableObject {
     
     func generateDayForMonth() -> [Date] {
         var month: [Date] = []
-        guard let monthInterval = Calendar.current.dateInterval(of: .month, for: currentMonth) else { return month }
+        guard let monthInterval = calendar.dateInterval(of: .month, for: currentMonth) else { return month }
         
         var currentDay = monthInterval.start
         
         while currentDay < monthInterval.end {
             month.append(currentDay)
-            currentDay = Calendar.current.date(byAdding: .day, value: 1, to: currentDay) ?? .now
+            currentDay = calendar.date(byAdding: .day, value: 1, to: currentDay) ?? .now
         }
         
         return month
@@ -86,11 +89,11 @@ class EventsViewModel: ObservableObject {
     }
     
     func goToNextMonth() {
-        self.currentMonth = Calendar.current.date(byAdding: .month, value: 1, to: currentMonth) ?? .now
+        self.currentMonth = calendar.date(byAdding: .month, value: 1, to: currentMonth) ?? .now
     }
     
     func goToPreviousMonth() {
-        self.currentMonth = Calendar.current.date(byAdding: .month, value: -1, to: currentMonth) ?? .now
+        self.currentMonth = calendar.date(byAdding: .month, value: -1, to: currentMonth) ?? .now
     }
 }
 

@@ -83,4 +83,86 @@ final class EventsViewModelTests: XCTestCase {
         await eventsVM.fetchEvents()
         XCTAssertEqual(eventsVM.error, "fetching events")
     }
+    
+    func testGenerateDayForMonth() {
+        let eventsVM = EventsViewModel()
+        
+        guard let date = String("07/05/2025").toDate() else {
+            XCTFail("Fails to create date")
+            return
+        }
+        
+        eventsVM.currentMonth = date
+        
+        let month = eventsVM.generateDayForMonth()
+        
+        guard let day = month.first else {
+            XCTFail("Fails to get first day")
+            return
+        }
+        
+        XCTAssertEqual(day.getDay(), 1)
+        XCTAssertEqual(day.toString(format: "MMMM"), "July")
+    }
+    
+    func testGoToNextMonth() {
+        let eventsVM = EventsViewModel()
+        
+        guard let date = String("07/05/2025").toDate() else {
+            XCTFail("Fails to create date")
+            return
+        }
+        
+        eventsVM.currentMonth = date
+        
+        eventsVM.goToNextMonth()
+        
+        XCTAssertEqual(eventsVM.currentMonth.toString(format: "MMMM"), "August")
+    }
+    
+    func testGoToPreviousMonth() {
+        let eventsVM = EventsViewModel()
+        
+        guard let date = String("07/05/2025").toDate() else {
+            XCTFail("Fails to create date")
+            return
+        }
+        
+        eventsVM.currentMonth = date
+        
+        eventsVM.goToPreviousMonth()
+        
+        XCTAssertEqual(eventsVM.currentMonth.toString(format: "MMMM"), "June")
+    }
+    
+    func testGoToNow() {
+        let eventsVM = EventsViewModel()
+        
+        guard let date = String("07/05/2025").toDate() else {
+            XCTFail("Fails to create date")
+            return
+        }
+        
+        eventsVM.currentMonth = date
+        
+        eventsVM.goToNow()
+        
+        XCTAssertEqual(eventsVM.currentMonth.stripTime(), .now.stripTime())
+    }
+    
+    func testGetEvent() {
+        let eventsVM = EventsViewModel()
+        let event = Event(title: "title",
+                          descrition: "description",
+                          date: .now,
+                          hour: .now,
+                          imageURL: "",
+                          address: "",
+                          location: .init(latitude: 0, longitude: 0),
+                          creatorID: ""
+                         )
+        eventsVM.events = [event]
+        
+        XCTAssertEqual(eventsVM.getEvents(for: .now), [event])
+    }
 }
