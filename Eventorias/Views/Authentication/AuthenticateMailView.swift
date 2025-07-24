@@ -57,7 +57,7 @@ struct AuthenticateMailView: View {
                 .frame(width: 242)
                 .background {
                     RoundedRectangle(cornerRadius: 4)
-                        .fill(shouldDisable ? .red.opacity(0.6) : .red)
+                        .fill(shouldDisable ? Color("CustomRed").opacity(0.6) : Color("CustomRed"))
                 }
             }
             .padding(.top)
@@ -66,13 +66,13 @@ struct AuthenticateMailView: View {
                 coordinator.goToRegister()
             } label: {
                 Text("Create an account")
-                .foregroundStyle(.red)
+                .foregroundStyle(Color("CustomRed"))
                 .padding(10)
                 .frame(width: 242)
                 .background {
                     RoundedRectangle(cornerRadius: 4)
                         .stroke(lineWidth: 2)
-                        .fill(.red)
+                        .fill(Color("CustomRed"))
                 }
             }
             Spacer()
@@ -83,7 +83,7 @@ struct AuthenticateMailView: View {
             if let error = authVM.error {
                 Text(error)
                     .frame(maxWidth: .infinity)
-                    .background(.red)
+                    .background(Color("CustomRed"))
                     .foregroundStyle(.white)
             }
         })

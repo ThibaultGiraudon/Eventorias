@@ -103,7 +103,7 @@ struct EventsListView: View {
                     .padding()
                     .background {
                         RoundedRectangle(cornerRadius: 16)
-                            .fill(.red)
+                            .fill(Color("CustomRed"))
                     }
                     .padding()
             }

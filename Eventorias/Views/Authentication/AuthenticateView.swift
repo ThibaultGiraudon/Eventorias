@@ -26,7 +26,7 @@ struct AuthenticateView: View {
                 .frame(width: 242)
                 .background {
                     RoundedRectangle(cornerRadius: 4)
-                        .fill(.red)
+                        .fill(Color("CustomRed"))
                 }
             }
             .padding(.top, 64)

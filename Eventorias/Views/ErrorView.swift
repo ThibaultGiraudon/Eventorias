@@ -35,7 +35,7 @@ struct ErrorView: View {
                     .padding(.horizontal, 40)
                     .background {
                         RoundedRectangle(cornerRadius: 4)
-                            .fill(.red)
+                            .fill(Color("CustomRed"))
                     }
             }
             .padding(.top, 35)

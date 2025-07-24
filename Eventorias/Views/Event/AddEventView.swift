@@ -77,7 +77,7 @@ struct AddEventView: View {
                         .frame(width: 52, height: 52)
                         .background {
                             RoundedRectangle(cornerRadius: 16)
-                                .fill(.red)
+                                .fill(Color("CustomRed"))
                         }
                         .onTapGesture {
                             showPhotosPicker = true
@@ -105,7 +105,7 @@ struct AddEventView: View {
                     .padding()
                     .background {
                         RoundedRectangle(cornerRadius: 4)
-                            .fill(.red.opacity(viewModel.shouldDisable ? 0.6 : 1.0))
+                            .fill(Color("CustomRed").opacity(viewModel.shouldDisable ? 0.6 : 1.0))
                     }
                     .padding()
             }
@@ -115,7 +115,7 @@ struct AddEventView: View {
             if let error = viewModel.error {
                 Text(error)
                     .frame(maxWidth: .infinity)
-                    .background(.red)
+                    .background(Color("CustomRed"))
                     .foregroundStyle(.white)
             }
         })

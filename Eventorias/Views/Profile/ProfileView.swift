@@ -91,14 +91,14 @@ struct ProfileView: View {
                         await session.updateUser(email: email, fullname: fullname)
                     }
                 } label: {
-                    Text("Save chage")
+                    Text("Save change")
                         .font(.title2)
                         .foregroundStyle(.white)
                         .padding()
                         .frame(maxWidth: .infinity)
                         .background {
                             RoundedRectangle(cornerRadius: 4)
-                                .fill(.red.opacity(shouldDisable ? 0.6 : 1.0))
+                                .fill(Color("CustomRed").opacity(shouldDisable ? 0.6 : 1.0))
                         }
                         .padding()
                 }

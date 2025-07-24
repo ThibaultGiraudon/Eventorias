@@ -58,13 +58,13 @@ struct RegisterView: View {
                 }
             } label: {
                 Text("Create an account")
-                .foregroundStyle(shouldDisable ? .gray : .red)
+                .foregroundStyle(shouldDisable ? .gray : Color("CustomRed"))
                 .padding(10)
                 .frame(width: 242)
                 .background {
                     RoundedRectangle(cornerRadius: 4)
                         .stroke(lineWidth: 2)
-                        .fill(shouldDisable ? .gray : .red)
+                        .fill(shouldDisable ? .gray : Color("CustomRed"))
                 }
             }
             .disabled(shouldDisable)
@@ -76,7 +76,7 @@ struct RegisterView: View {
             if let error = authVM.error {
                 Text(error)
                     .frame(maxWidth: .infinity)
-                    .background(.red)
+                    .background(Color("CustomRed"))
                     .foregroundStyle(.white)
             }
         })

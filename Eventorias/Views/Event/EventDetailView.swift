@@ -110,7 +110,7 @@ struct EventDetailView: View {
                         .padding()
                         .background {
                             RoundedRectangle(cornerRadius: 4)
-                                .fill(.red)
+                                .fill(Color("CustomRed"))
                         }
                 }
                 .padding(.top, 22)

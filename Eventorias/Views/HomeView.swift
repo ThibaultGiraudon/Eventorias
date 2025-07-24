@@ -44,7 +44,7 @@ struct HomeView: View {
                                     .font(.title)
                                 Text(tab.rawValue)
                             }
-                            .foregroundStyle(selectedTab == tab ? .red : .white)
+                            .foregroundStyle(selectedTab == tab ? Color("CustomRed") : .white)
                             .onTapGesture {
                                 selectedTab = tab
                             }
