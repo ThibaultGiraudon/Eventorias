@@ -14,6 +14,7 @@ class EventsViewModel: ObservableObject {
     @Published var sortingBy: SortingOrder = .ascending
     @Published var filterBy: FilterType = .date
     @Published var error: String?
+    @Published var currentMonth: Date = .now
     var filteredEvents: [Event] {
         events.filter { event in
             if searchText.isEmpty {
@@ -58,6 +59,38 @@ class EventsViewModel: ObservableObject {
             self.error = "fetching events"
         }
         self.isLoading = false
+    }
+    
+    func generateDayForMonth() -> [Date] {
+        var month: [Date] = []
+        guard let monthInterval = Calendar.current.dateInterval(of: .month, for: currentMonth) else { return month }
+        
+        var currentDay = monthInterval.start
+        
+        while currentDay < monthInterval.end {
+            month.append(currentDay)
+            currentDay = Calendar.current.date(byAdding: .day, value: 1, to: currentDay) ?? .now
+        }
+        
+        return month
+    }
+    
+    func getEvents(for date: Date) -> [Event] {
+        events.filter { event in
+            event.date.stripTime() == date.stripTime()
+        }
+    }
+    
+    func goToNow() {
+        self.currentMonth = .now
+    }
+    
+    func goToNextMonth() {
+        self.currentMonth = Calendar.current.date(byAdding: .month, value: 1, to: currentMonth) ?? .now
+    }
+    
+    func goToPreviousMonth() {
+        self.currentMonth = Calendar.current.date(byAdding: .month, value: -1, to: currentMonth) ?? .now
     }
 }
 

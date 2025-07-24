@@ -11,7 +11,7 @@ struct HomeView: View {
     @ObservedObject var session: UserSessionViewModel
     @ObservedObject var authVM: AuthenticationViewModel
     @ObservedObject var eventsVM: EventsViewModel
-    @State private var selectedTab: TabItem = .events
+    @State private var selectedTab: TabItem = .list
     @State private var activeError: String?
     var body: some View {
         VStack {
@@ -31,8 +31,10 @@ struct HomeView: View {
                         }
                     } else {
                         switch selectedTab {
-                        case .events:
+                        case .list:
                             EventsListView(eventsVM: eventsVM)
+                        case .calendar:
+                            EventsCalendarView(eventsVM: eventsVM)
                         case .profile:
                             ProfileView(session: session)
                         }
@@ -51,15 +53,15 @@ struct HomeView: View {
                         }
                     }
                     .frame(maxWidth: .infinity)
-                    .background {
-                        Color("background")
-                            .ignoresSafeArea()
-                    }
                 }
             }
         }
         .onReceive(session.$error) { if let err = $0 { activeError = err} }
         .onReceive(eventsVM.$error) { if let err = $0 { activeError = err} }
+        .background {
+            Color("background")
+                .ignoresSafeArea()
+        }
     }
 }
 
@@ -72,8 +74,10 @@ struct HomeView: View {
         imageURL: "https://firebasestorage.googleapis.com/v0/b/eventorias-df464.firebasestorage.app/o/profils_image%2Fdefault-profile-image.jpg?alt=media&token=c9a78295-2ad4-4acf-872d-c193116783c5"
     )
     session.isLoggedIn = true
+    
 
     let auth = AuthenticationViewModel(session: session)
+    auth.authenticationState = .signedIn
     let eventsVM = EventsViewModel()
     return HomeView(session: session, authVM: auth, eventsVM: eventsVM)
 }

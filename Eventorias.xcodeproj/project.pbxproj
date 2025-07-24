@@ -43,9 +43,22 @@
 		CED423D12E2930980014D0E6 /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		CE1076B82E32763F00512102 /* Exceptions for "Eventorias" folder in "Eventorias" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = CED423602E2903C40014D0E6 /* Eventorias */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		CED423632E2903C40014D0E6 /* Eventorias */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				CE1076B82E32763F00512102 /* Exceptions for "Eventorias" folder in "Eventorias" target */,
+			);
 			path = Eventorias;
 			sourceTree = "<group>";
 		};
