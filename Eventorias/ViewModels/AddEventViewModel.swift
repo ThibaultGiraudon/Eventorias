@@ -21,13 +21,14 @@ protocol CLGeocoderInterface {
 extension CLGeocoder: CLGeocoderInterface { }
 
 class AddEventViewModel: ObservableObject {
+    @Published var isLoading: Bool = false
+    @Published var error: String?
     @Published var title: String = ""
     @Published var description: String = ""
     @Published var date: String = ""
     @Published var hour: String = ""
     @Published var address: String = ""
     @Published var uiImage: UIImage?
-    @Published var error: String?
     @Published var location: Location?
     @Published var position = MapCameraPosition.region(
         MKCoordinateRegion(
@@ -36,7 +37,7 @@ class AddEventViewModel: ObservableObject {
     )
     
     var shouldDisable: Bool {
-        title.isEmpty || description.isEmpty || date.isEmpty || hour.isEmpty || address.isEmpty || uiImage == nil
+        title.isEmpty || description.isEmpty || date.isEmpty || hour.isEmpty || address.isEmpty || uiImage == nil || isLoading
     }
 
     private let eventRepository: EventsRepository = .init()
@@ -51,6 +52,7 @@ class AddEventViewModel: ObservableObject {
     
     @MainActor
     func addEvent() async {
+        isLoading = true
         self.session.error = nil
         self.error = nil
         guard let date = self.date.toDate() else {
@@ -94,6 +96,7 @@ class AddEventViewModel: ObservableObject {
         } catch {
             self.session.error = "creating a new event"
         }
+        isLoading = false
     }
     
     @MainActor

@@ -98,7 +98,13 @@ struct AddEventView: View {
                     }
                 }
             } label: {
-                Text("Validate")
+                Group {
+                    if viewModel.isLoading {
+                        ProgressView()
+                    } else {
+                        Text("Validate")
+                    }
+                }
                     .font(.title3)
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
