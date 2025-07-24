@@ -28,6 +28,9 @@ struct CustomTextField: View {
             RoundedRectangle(cornerRadius: 4)
                 .fill(Color("CustomGray"))
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(title)
+        .accessibilityValue(label)
     }
 }
 
