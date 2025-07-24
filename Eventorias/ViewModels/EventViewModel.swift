@@ -47,6 +47,7 @@ class EventViewModel: ObservableObject {
     @MainActor
     func addEvent() async {
         await session.addEvent(event, to: .subscribed)
+        NotificationHelper.shared.createNotification(name: event.title, at: event.date)
     }
     
     @MainActor

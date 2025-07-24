@@ -13,7 +13,8 @@ struct ProfileView: View {
     @State private var fullname: String
     @State private var email: String
     @State private var selectedEvents: EventsType = .created
-    
+    @AppStorage("notificationsEnabled") private var notificationsEnabled: Bool = true
+
     @EnvironmentObject var coordinator: AppCoordinator
     
     var shouldDisable: Bool {
@@ -40,6 +41,12 @@ struct ProfileView: View {
                 CustomTextField(title: "E-mail", label: "", text: $email)
                     .keyboardType(.emailAddress)
                     .textInputAutocapitalization(.never)
+                Toggle(isOn: $notificationsEnabled) {
+                    Text("Notifications")
+                }
+                .tint(Color("CustomRed"))
+                .foregroundStyle(.white)
+                .padding(.vertical)
                 HStack {
                     Text("My events")
                         .padding(.vertical, 8)
