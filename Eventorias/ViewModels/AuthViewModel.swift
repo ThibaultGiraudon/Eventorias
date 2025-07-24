@@ -30,6 +30,8 @@ class AuthenticationViewModel: ObservableObject {
     /// An optional error message to be displayed in the UI if an operation failed.
     @Published var error: String?
     
+    @Published var rememberMe: Bool = false
+    
     @Published var authenticationState: AuthenticationState = .signedOut
 
     // MARK: - Private Properties
@@ -60,19 +62,18 @@ class AuthenticationViewModel: ObservableObject {
     /// Stores user data in `UserSessionViewModel`.
     ///
     /// - Parameter completion: A closure called upon successful authentication.
-    func signIn() async throws {
+    func signIn() async {
         authenticationState = .signingIn
         self.error = nil
         do {
             let uid = try await authRepository.authenticate(email: email, password: password)
+            email = ""
+            password = ""
             await session.loadUser(by: uid)
-            KeychainHelper.shared.save(self.email, for: "UserEmail")
-            KeychainHelper.shared.save(self.password, for: "UserPassword")
             self.authenticationState = .signedIn
         } catch {
             self.error = error.localizedDescription
             self.authenticationState = .signedOut
-            throw error
         }
     }
 
@@ -86,10 +87,10 @@ class AuthenticationViewModel: ObservableObject {
         do {
             let uid = try await authRepository.register(email: email, password: password)
             let newUser = User(uid: uid, email: email, fullname: fullname, imageURL: nil)
+            email = ""
+            password = ""
             userRepository.setUser(newUser)
             await session.loadUser(by: uid)
-            KeychainHelper.shared.save(self.email, for: "UserEmail")
-            KeychainHelper.shared.save(self.password, for: "UserPassword")
             self.authenticationState = .signedIn
         } catch {
             self.error = error.localizedDescription
@@ -103,6 +104,7 @@ class AuthenticationViewModel: ObservableObject {
         self.error = nil
         do {
             try authRepository.signOut()
+            self.authenticationState = .signedOut
         } catch {
             self.error = error.localizedDescription
             self.authenticationState = .signedIn

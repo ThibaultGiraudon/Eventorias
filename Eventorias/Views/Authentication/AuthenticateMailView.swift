@@ -43,12 +43,8 @@ struct AuthenticateMailView: View {
             .foregroundStyle(.white)
             Button {
                 Task {
-                    do {
-                        try await authVM.signIn()
-                        coordinator.resetNavigation()
-                    } catch {
-                        
-                    }
+                    await authVM.signIn()
+                    coordinator.resetNavigation()
                 }
             } label: {
                 Text("Sign in")

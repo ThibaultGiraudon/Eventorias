@@ -36,7 +36,7 @@ struct HomeView: View {
                         case .calendar:
                             EventsCalendarView(eventsVM: eventsVM)
                         case .profile:
-                            ProfileView(session: session)
+                            ProfileView(session: session, authVM: authVM)
                         }
                     }
                     HStack(spacing: 33) {
@@ -74,7 +74,6 @@ struct HomeView: View {
         imageURL: "https://firebasestorage.googleapis.com/v0/b/eventorias-df464.firebasestorage.app/o/profils_image%2Fdefault-profile-image.jpg?alt=media&token=c9a78295-2ad4-4acf-872d-c193116783c5"
     )
     session.isLoggedIn = true
-    
 
     let auth = AuthenticationViewModel(session: session)
     auth.authenticationState = .signedIn

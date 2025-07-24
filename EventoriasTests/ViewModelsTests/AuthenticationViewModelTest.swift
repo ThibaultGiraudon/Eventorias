@@ -18,11 +18,7 @@ final class AuthenticationViewModelTest: XCTestCase {
         userRepositoryFake.user = User(uid: "123", email: "charles.leclerc@ferrari.mc", fullname: "Charles Leclerc", imageURL: nil)
         let viewModel = AuthenticationViewModel(session: session, authRepository: authRepositoryFake, userRepository: userRepositoryFake)
         
-        do {
-            try await viewModel.signIn()
-        } catch {
-            XCTFail("SignIn should not throws error")
-        }
+        await viewModel.signIn()
 
         XCTAssertEqual(viewModel.authenticationState, .signedIn)
     }
@@ -36,11 +32,7 @@ final class AuthenticationViewModelTest: XCTestCase {
         userRepositoryFake.user = User(uid: "123", email: "charles.leclerc@ferrari.mc", fullname: "Charles Leclerc", imageURL: nil)
         let viewModel = AuthenticationViewModel(session: session, authRepository: authRepositoryFake, userRepository: userRepositoryFake)
         
-        do {
-            try await viewModel.signIn()
-        } catch {
-            XCTAssertEqual(error.localizedDescription, URLError(.badURL).localizedDescription)
-        }
+        await viewModel.signIn()
 
         XCTAssertEqual(viewModel.authenticationState, .signedOut)
     }

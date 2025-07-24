@@ -10,6 +10,7 @@ import Kingfisher
 
 struct ProfileView: View {
     @ObservedObject var session: UserSessionViewModel
+    @ObservedObject var authVM: AuthenticationViewModel
     @State private var fullname: String
     @State private var email: String
     @State private var selectedEvents: EventsType = .created
@@ -21,10 +22,11 @@ struct ProfileView: View {
         (fullname == session.currentUser?.fullname && email == session.currentUser?.email) || fullname.isEmpty || email.isEmpty
     }
     
-    init(session: UserSessionViewModel) {
+    init(session: UserSessionViewModel, authVM: AuthenticationViewModel) {
         self.session = session
         self.fullname = session.currentUser?.fullname ?? ""
         self.email = session.currentUser?.email ?? ""
+        self.authVM = authVM
     }
     var body: some View {
         if session.currentUser != nil {
@@ -93,23 +95,41 @@ struct ProfileView: View {
                     }
                 }
                 Spacer()
-                Button {
-                    Task {
-                        await session.updateUser(email: email, fullname: fullname)
-                    }
-                } label: {
-                    Text("Save change")
-                        .font(.title2)
-                        .foregroundStyle(.white)
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                        .background {
-                            RoundedRectangle(cornerRadius: 4)
-                                .fill(Color("CustomRed").opacity(shouldDisable ? 0.6 : 1.0))
+                HStack {
+                    Button {
+                        Task {
+                            await authVM.signOut()
                         }
-                        .padding()
+                    } label: {
+                        Text("Log Out")
+                            .font(.title2)
+                            .foregroundStyle(.black)
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                            .background {
+                                RoundedRectangle(cornerRadius: 4)
+                                    .fill(.white)
+                            }
+                            .padding()
+                    }
+                    Button {
+                        Task {
+                            await session.updateUser(email: email, fullname: fullname)
+                        }
+                    } label: {
+                        Text("Save change")
+                            .font(.title2)
+                            .foregroundStyle(.white)
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                            .background {
+                                RoundedRectangle(cornerRadius: 4)
+                                    .fill(Color("CustomRed").opacity(shouldDisable ? 0.6 : 1.0))
+                            }
+                            .padding()
+                    }
+                    .disabled(shouldDisable)
                 }
-                .disabled(shouldDisable)
             }
             .padding()
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -131,5 +151,5 @@ struct ProfileView: View {
     )
     session.isLoggedIn = true
     
-    return ProfileView(session: session)
+    return ProfileView(session: session, authVM: AuthenticationViewModel(session: session))
 }
