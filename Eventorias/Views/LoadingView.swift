@@ -39,6 +39,8 @@ struct LoadingView: View {
                 rotationDegree = 630
             }
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Waiting for content to load")
     }
 }
 
