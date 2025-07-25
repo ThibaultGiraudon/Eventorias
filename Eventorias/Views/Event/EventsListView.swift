@@ -14,6 +14,7 @@ struct EventsListView: View {
         VStack(alignment: .leading) {
             HStack {
                 Image(systemName: "magnifyingglass")
+                    .accessibilityHidden(true)
                 TextField(text: $eventsVM.searchText) {
                     Text("Search")
                         .foregroundStyle(.white)
@@ -24,6 +25,8 @@ struct EventsListView: View {
                         .onTapGesture {
                             eventsVM.searchText = ""
                         }
+                        .accessibilityLabel("Erase button")
+                        .accessibilityHint("Double-tap to erase search text")
                 }
             }
             .foregroundStyle(.white)
@@ -53,6 +56,9 @@ struct EventsListView: View {
                         eventsVM.sortingBy = .ascending
                     }
                 }
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel("Sorting button")
+                .accessibilityHint("Double-tap sort \(eventsVM.sortingBy == .ascending ? "descending" : "ascending")")
                 
                 Picker("Filter", selection: $eventsVM.filterBy) {
                     ForEach(FilterType.allCases, id: \.self) { filter in
@@ -66,6 +72,7 @@ struct EventsListView: View {
                     Capsule()
                         .fill(Color("CustomGray"))
                 }
+                .accessibilityHint("Double-tap to change filter")
             }
             .padding(.bottom, 24)
             if eventsVM.isLoading {
@@ -107,6 +114,9 @@ struct EventsListView: View {
                     }
                     .padding()
             }
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("Add button")
+            .accessibilityHint("Double-tap to open form to add an event")
         }
         .onAppear {
             Task {

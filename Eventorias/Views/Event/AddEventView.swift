@@ -23,6 +23,8 @@ struct AddEventView: View {
                     .onTapGesture {
                         coordinator.dismiss()
                     }
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityHint("Double-tap to go back")
                 Text("Creation of an event")
                 Spacer()
             }
@@ -56,6 +58,9 @@ struct AddEventView: View {
                     }
                     .mapStyle(.hybrid)
                     .frame(height: 200)
+                    .accessibilityElement()
+                    .accessibilityLabel("Map")
+                    .accessibilityValue("Centered on \(viewModel.address)")
                 }
                 HStack(spacing: 16) {
                     Image(systemName: "camera")
@@ -69,6 +74,9 @@ struct AddEventView: View {
                         .onTapGesture {
                             isCameraPresented = true
                         }
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel("Camera button")
+                        .accessibilityHint("Double-tap to take a picture")
                     
                     Image(systemName: "paperclip")
                         .foregroundStyle(.white)
@@ -82,11 +90,15 @@ struct AddEventView: View {
                         .onTapGesture {
                             showPhotosPicker = true
                         }
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel("Gallery button")
+                        .accessibilityHint("Double-tap to import a picture")
                 }
                 if let image = viewModel.uiImage {
                     Image(uiImage: image)
                         .resizable()
                         .scaledToFit()
+                        .accessibilityElement(children: .ignore)
                 }
             }
             Spacer()
@@ -94,6 +106,7 @@ struct AddEventView: View {
                 Task {
                     await viewModel.addEvent()
                     if viewModel.error == nil {
+                        UIAccessibility.post(notification: .announcement, argument: "Successfuly added new event")
                         coordinator.dismiss()
                     }
                 }
@@ -116,6 +129,9 @@ struct AddEventView: View {
                     .padding()
             }
             .disabled(viewModel.shouldDisable)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("Validate button")
+            .accessibilityHint(viewModel.shouldDisable ? "Button disable, fill out all the fields" : "Double-tap to sign in")
         }
         .overlay(alignment: .bottom, content: {
             if let error = viewModel.error {
@@ -123,6 +139,9 @@ struct AddEventView: View {
                     .frame(maxWidth: .infinity)
                     .background(Color("CustomRed"))
                     .foregroundStyle(.white)
+                    .onAppear {
+                        UIAccessibility.post(notification: .announcement, argument: error)
+                    }
             }
         })
         .background {

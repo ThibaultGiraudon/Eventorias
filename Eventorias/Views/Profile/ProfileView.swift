@@ -49,6 +49,9 @@ struct ProfileView: View {
                 .tint(Color("CustomRed"))
                 .foregroundStyle(.white)
                 .padding(.vertical)
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel("Notification toggle")
+                .accessibilityHint("Double-tap to \(notificationsEnabled ? "disable" : "enable") notifications")
                 HStack {
                     Text("My events")
                         .padding(.vertical, 8)
@@ -60,6 +63,9 @@ struct ProfileView: View {
                         .onTapGesture {
                             selectedEvents = .created
                         }
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel("My events button")
+                        .accessibilityHint("Double-tap to show your created events")
                     
                     Text("Subsribed events")
                         .padding(.vertical, 8)
@@ -71,6 +77,9 @@ struct ProfileView: View {
                         .onTapGesture {
                             selectedEvents = .subscribed
                         }
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel("Subscribed events button")
+                        .accessibilityHint("Double-tap to show your subscribed events")
                 }
                 .foregroundStyle(.white)
                 .padding(.top, 22)
@@ -112,6 +121,7 @@ struct ProfileView: View {
                             }
                             .padding()
                     }
+                    .accessibilityHint("Double-tap to log out")
                     Button {
                         Task {
                             await session.updateUser(email: email, fullname: fullname)
@@ -129,6 +139,7 @@ struct ProfileView: View {
                             .padding()
                     }
                     .disabled(shouldDisable)
+                    .accessibilityHint(shouldDisable ? "Button disable, fill out all the fields" : "Double-tap to save changes")
                 }
             }
             .padding()

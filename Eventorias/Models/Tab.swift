@@ -8,7 +8,7 @@
 import Foundation
 
 enum TabItem: String, CaseIterable {
-    case profile, list, calendar
+    case list, calendar, profile
     
     var icon: String {
         switch self {

@@ -31,6 +31,8 @@ struct EventDetailView: View {
                     .onTapGesture {
                         coordinator.dismiss()
                     }
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityHint("Double-tap to go back")
                 Text(event.title)
                 Spacer()
             }
@@ -43,6 +45,8 @@ struct EventDetailView: View {
                     .aspectRatio(contentMode: .fit)
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                     .padding(.bottom, 22)
+                    .accessibilityElement()
+                    .accessibilityLabel("Event's image")
                     .overlay(alignment: .topTrailing) {
                         ShareLink(item: "\(event.title), \(event.date.toString(format: "MM/dd/yyyy"))\nHope you can come!") {
                             Image("share")
@@ -53,6 +57,9 @@ struct EventDetailView: View {
                                 }
                                 .padding(10)
                         }
+                        .accessibilityElement()
+                        .accessibilityLabel("Share button")
+                        .accessibilityHint("Double-tap to share event")
                     }
                 HStack {
                     VStack(alignment: .leading) {
@@ -67,6 +74,8 @@ struct EventDetailView: View {
                         }
                     }
                     .font(.title3)
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityValue("\(event.date.toString(format: "MMMM dd, yyyy")) at \(event.hour.toString(format: "HH:mm a"))")
                     
                     Spacer()
                     
@@ -76,6 +85,8 @@ struct EventDetailView: View {
                         .frame(width: 60, height: 60)
                         .clipped()
                         .clipShape(Circle())
+                        .accessibilityElement()
+                        .accessibilityLabel("Owner's image")
                 }
                 
                 Text(event.descrition)
@@ -91,6 +102,7 @@ struct EventDetailView: View {
                         }
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                         .frame(width: proxy.size.width / 2)
+                        .accessibilityHidden(true)
                     }
                 }
                 .frame(height: 100)
@@ -114,6 +126,9 @@ struct EventDetailView: View {
                         }
                 }
                 .padding(.top, 22)
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel("\(eventVM.isSubsribe ? "Unsubsribe" : "Subscribe") button")
+                .accessibilityHint("Double-tap to \(eventVM.isSubsribe ? "Unsubsribe" : "Subscribe") to the event")
             }
         }
         .padding(.horizontal)

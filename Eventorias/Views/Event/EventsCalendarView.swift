@@ -21,6 +21,8 @@ struct EventsCalendarView: View {
                 customButton(systemName: "chevron.left") {
                     eventsVM.goToPreviousMonth()
                 }
+                .accessibilityLabel("Previous month button")
+                .accessibilityHint("Double-tap to go to previous month")
                 Button {
                     eventsVM.goToNow()
                 } label: {
@@ -32,9 +34,13 @@ struct EventsCalendarView: View {
                                 .fill(Color("CustomGray"))
                         }
                 }
+                .accessibilityLabel("Current month button")
+                .accessibilityHint("Double-tap to go to current month")
                 customButton(systemName: "chevron.right") {
                     eventsVM.goToNextMonth()
                 }
+                .accessibilityLabel("Next month button")
+                .accessibilityHint("Double-tap to go to next month")
             }
             LazyVGrid(columns: Array(repeating: .init(), count: 7)) {
                 ForEach(eventsVM.generateDayForMonth(), id: \.self) { day in
@@ -51,9 +57,15 @@ struct EventsCalendarView: View {
                         }
                         .onTapGesture {
                             selectedDay = day
+                            UIAccessibility.post(notification: .announcement, argument: "There are \(eventsVM.getEvents(for: day).count) events for that day")
                         }
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityValue("\(day.toString(format: "dd MMMM")), \(eventsVM.getEvents(for: day).count) event")
+                        .accessibilityHint("Double-tap to get events for the day")
                 }
             }
+            .accessibilityElement(children: .contain)
+            .accessibilityLabel("Calendar of events")
             
             ScrollView {
                 if eventsVM.getEvents(for: selectedDay).isEmpty {
@@ -88,6 +100,7 @@ struct EventsCalendarView: View {
                         .fill(Color("CustomGray"))
                 }
         }
+        .accessibilityElement(children: .ignore)
     }
 }
 

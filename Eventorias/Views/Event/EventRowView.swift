@@ -26,11 +26,16 @@ struct EventRowView: View {
                 .clipped()
                 .clipShape(Circle())
                 .padding(.leading)
+                .accessibilityElement()
+                .accessibilityLabel("Owner's image")
             VStack(alignment: .leading) {
                 Text(event.title)
                     .font(.title3)
                 Text(event.date.toString(format: "MMMM dd, yyyy"))
             }
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("Event's information")
+            .accessibilityValue("\(event.title) the \(event.date.toString(format: "MMMM dd, yyyy"))")
             Spacer()
             KFImage(URL(string: event.imageURL))
                 .resizable()
@@ -38,6 +43,8 @@ struct EventRowView: View {
                 .frame(width: 136, height: 80)
                 .clipped()
                 .clipShape(RoundedRectangle(cornerRadius: 12))
+                .accessibilityElement()
+                .accessibilityLabel("Event's image")
         }
         .foregroundStyle(.white)
         .background {
