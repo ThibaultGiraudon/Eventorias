@@ -9,6 +9,8 @@ import Foundation
 import SwiftUI
 import MapKit
 
+// change with google map API
+
 struct Location: Identifiable {
     var id = UUID()
     var coordinate: CLLocationCoordinate2D
@@ -57,26 +59,31 @@ class AddEventViewModel: ObservableObject {
         self.error = nil
         guard let date = self.date.toDate() else {
             self.error = "Bad date format (should be MM/DD/YYYY)."
+            isLoading = false
             return
         }
         
         guard let hour = self.hour.toHour() else {
             self.error = "Bad hour format (should be HH:MM)."
+            isLoading = false
             return
         }
                 
         guard let coordinate = location?.coordinate else {
             self.error = "Failed to get address."
+            isLoading = false
             return
         }
         
         guard let uiImage = self.uiImage else {
             self.error = "Can't find image."
+            isLoading = false
             return
         }
-        
+
         guard let user = session.currentUser else {
             self.error = "User not logged in."
+            isLoading = false
             return
         }
         
@@ -95,7 +102,15 @@ class AddEventViewModel: ObservableObject {
             await session.addEvent(event, to: .subscribed)
         } catch {
             self.session.error = "creating a new event"
+            isLoading = false
         }
+        self.location = nil
+        self.title = ""
+        self.date = ""
+        self.hour = ""
+        self.description = ""
+        self.address = ""
+        self.uiImage = nil
         isLoading = false
     }
     

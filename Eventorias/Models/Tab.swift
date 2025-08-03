@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// The different main view to display after the user logged in.
 enum TabItem: String, CaseIterable {
     case list, calendar, profile
     

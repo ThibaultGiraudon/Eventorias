@@ -8,6 +8,7 @@
 import Foundation
 import FirebaseAuth
 
+/// A protocol that defines authentication-related operation.
 protocol AuthRepositoryInterface {
     func register(email: String, password: String) async throws -> String
     func authenticate(email: String, password: String) async throws -> String

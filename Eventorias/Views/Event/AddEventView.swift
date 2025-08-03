@@ -25,6 +25,7 @@ struct AddEventView: View {
                     }
                     .accessibilityElement(children: .ignore)
                     .accessibilityHint("Double-tap to go back")
+                    .disabled(viewModel.isLoading)
                 Text("Creation of an event")
                 Spacer()
             }

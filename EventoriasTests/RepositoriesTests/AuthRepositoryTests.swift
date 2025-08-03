@@ -10,6 +10,9 @@ import XCTest
 import FirebaseAuth
 import Firebase
 
+// Mock firebase
+// utiliser pour test integration
+
 final class AuthRepositoryTests: XCTestCase {
 
     var authRepository: AuthRepository!
@@ -28,6 +31,8 @@ final class AuthRepositoryTests: XCTestCase {
     func testRegisterAndAuthenticationAndSignOutShouldSucceed() async {
         let email = "testuser@example.com"
         let password = "testpassword"
+        
+        let result = AuthDataResult(coder: .init())
         
         do {
             let uid = try await authRepository.register(email: email, password: password)

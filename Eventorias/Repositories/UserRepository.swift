@@ -24,9 +24,8 @@ class UserRepository: UserRepositoryInterface {
     
     /// Creates or updates a user document in Firestore with new the given user information.
     ///
-    /// - Parameters:
-    ///   - user: The `User` to be created or updated.
-    ///   - completion: A closure called with an optionnal error if the opperation failed.
+    /// - Parameter user: The `User` to be created or updated.
+    /// - Throws: An error if the Firestore set operation fails.
     func setUser(_ user: User) {
         let data: [String: Any] = [
             "email": user.email,
@@ -40,6 +39,10 @@ class UserRepository: UserRepositoryInterface {
         db.collection("users").document(user.uid).setData(data)
     }
     
+    /// Creates or updates a  document in Firestore with  the given datas.
+    ///
+    /// - Parameter date: The `Data` to be created or updated.
+    /// - Throws: An error if the Firestore set operation fails.
     func setData(_ data: [String: Any], id: String) {
         db.collection("users").document(id).setData(data)
     }

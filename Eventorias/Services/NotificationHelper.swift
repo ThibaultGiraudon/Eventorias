@@ -12,15 +12,18 @@ class NotificationHelper {
     static let shared = NotificationHelper()
     let userNotificationCenter = UNUserNotificationCenter.current()
     
+    /// Computed var to check if user enables notification.
     var notificationsEnabled: Bool {
-        print(UserDefaults.standard.bool(forKey: "notificationsEnabled"))
         return UserDefaults.standard.bool(forKey: "notificationsEnabled")
     }
     
+    /// Initializes a new `NotificationHelper` object.
+    /// Request notification authorization.
     init() {
         requestAuthorization()
     }
     
+    /// Asks user authorization to send notification
     private func requestAuthorization() {
         userNotificationCenter.requestAuthorization(options: [.alert, .badge, .sound]) { success, error in
             if success {
@@ -31,6 +34,12 @@ class NotificationHelper {
         }
     }
     
+    /// Creates a new notification with specified name.
+    /// Send notification 2 hours and 5 minutes before event's start.
+    ///
+    /// - Parameters:
+    ///   - name: The subtitle `String` of the new notification.
+    ///   - date: The starting `Date` of the event.
     func createNotification(name: String, at date: Date) {
         guard notificationsEnabled else {
             print("User notification blocked")
@@ -53,9 +62,14 @@ class NotificationHelper {
                 timeInterval: timeUntilEvent - 300
             )
         }
-        scheduleNotification(title: "It's time!", subtitle: "\(name) is starting right now.", timeInterval: 5)
     }
 
+    /// Creates the notification.
+    ///
+    /// - Parameters:
+    ///   - title: The title `String` of the notification.
+    ///   - subtitle: The subtitle `String` of the notification.
+    ///   - timeInterval: The time in second before sendig the notification.
     private func scheduleNotification(title: String, subtitle: String, timeInterval: TimeInterval) {
         guard timeInterval > 0 else { return } // Ne rien planifier si l'heure est passée
 

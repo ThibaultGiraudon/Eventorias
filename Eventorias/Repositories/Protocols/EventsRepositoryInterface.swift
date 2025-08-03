@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// A protocol that defines event-related operation.
 protocol EventsRepositoryInterface {
     func getEvents() async throws -> [Event]
     func setEvent(_ event: Event) throws
