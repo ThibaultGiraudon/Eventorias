@@ -42,13 +42,18 @@ class AddEventViewModel: ObservableObject {
         title.isEmpty || description.isEmpty || date.isEmpty || hour.isEmpty || address.isEmpty || uiImage == nil || isLoading
     }
 
-    private let eventRepository: EventsRepository = .init()
-    private let storageRepository: StorageRepository = .init()
-    private let session: UserSessionViewModel
+    private let eventRepository: EventsRepositoryInterface
+    private let storageRepository: StorageRepositoryInterface
+    let session: UserSessionViewModel
     private let geocoder: CLGeocoderInterface
     
-    init(session: UserSessionViewModel, geocoder: CLGeocoderInterface = CLGeocoder()) {
+    init(session: UserSessionViewModel,
+         eventsRepository: EventsRepositoryInterface = EventsRepository(),
+         storageRepository: StorageRepositoryInterface = StorageRepository(),
+         geocoder: CLGeocoderInterface = CLGeocoder()) {
         self.session = session
+        self.eventRepository = eventsRepository
+        self.storageRepository = storageRepository
         self.geocoder = geocoder
     }
     
