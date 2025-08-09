@@ -18,10 +18,12 @@ class EventViewModel: ObservableObject {
         session.currentUser?.subscribedEvents.contains(event.id) ?? false
     }
     
-    private let userRepository: UserRepository = .init()
-    private let session: UserSessionViewModel
+    private let userRepository: UserRepositoryInterface
+    let session: UserSessionViewModel
     
-    init(event: Event, session: UserSessionViewModel) {
+    init(event: Event,
+         session: UserSessionViewModel,
+         userRepository: UserRepositoryInterface = UserRepository()) {
         self.event = event
         self.location = Location(coordinate: .init(latitude: event.location.latitude, longitude: event.location.longitude))
         self.position = MapCameraPosition.region(
@@ -30,6 +32,7 @@ class EventViewModel: ObservableObject {
              span: MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005))
         )
         self.session = session
+        self.userRepository = userRepository
     }
     
     @MainActor
