@@ -12,7 +12,7 @@ class EventsViewModel: ObservableObject {
     @Published var isLoading: Bool = true
     @Published var searchText: String = ""
     @Published var sortingBy: SortingOrder = .ascending
-    @Published var filterBy: FilterType = .date
+    @Published var filterBy: FilterType = .title
     @Published var error: String?
     @Published var currentMonth: Date = .now
     var filteredEvents: [Event] {
@@ -25,8 +25,6 @@ class EventsViewModel: ObservableObject {
                 return event.title.contains(searchText)
             case .description:
                 return event.descrition.contains(searchText)
-            case .date:
-                return event.date.toString(format: "MM/dd/yyyy").contains(searchText)
             case .address:
                 return event.address.contains(searchText)
             }
@@ -100,7 +98,6 @@ class EventsViewModel: ObservableObject {
 enum FilterType: String, CaseIterable {
     case title = "Title"
     case description = "Description"
-    case date = "Date"
     case address = "Address"
 }
 
