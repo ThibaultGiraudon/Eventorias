@@ -117,6 +117,7 @@ class AddEventViewModel: ObservableObject {
     @MainActor
     func geocodeAddress() async {
         self.error = nil
+        self.location = nil
         do {
             let placemarks = try await geocoder.geocodeAddressString(address)
             guard let placemark = placemarks.first, let location = placemark.location else {

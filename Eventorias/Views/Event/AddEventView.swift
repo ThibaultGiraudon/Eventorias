@@ -54,10 +54,7 @@ struct AddEventView: View {
                 .padding(.horizontal, 16)
                 .padding(.bottom, 48)
                 if let location = viewModel.location {
-                    Map(position: $viewModel.position) {
-                        Marker("", coordinate: location.coordinate)
-                    }
-                    .mapStyle(.hybrid)
+                    GoogleMapView(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
                     .frame(height: 200)
                     .accessibilityElement()
                     .accessibilityLabel("Map")

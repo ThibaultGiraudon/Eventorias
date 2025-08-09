@@ -97,9 +97,7 @@ struct EventDetailView: View {
                         Text(event.address)
                             .font(.title3)
                         Spacer()
-                        Map(position: $eventVM.position) {
-                            Marker("", coordinate: eventVM.location.coordinate)
-                        }
+                        GoogleMapView(latitude: event.location.latitude, longitude: event.location.longitude)
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                         .frame(width: proxy.size.width / 2)
                         .accessibilityHidden(true)

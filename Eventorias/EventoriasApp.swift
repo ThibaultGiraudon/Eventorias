@@ -10,6 +10,7 @@ import FirebaseCore
 import FirebaseAuth
 import FirebaseStorage
 import FirebaseFirestore
+import GoogleMaps
 
 class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
@@ -19,6 +20,13 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             Firestore.firestore().useEmulator(withHost: "localhost", port: 9010)
             Storage.storage().useEmulator(withHost: "localhost", port: 9020)
         }
+        guard let apiKey = Bundle.main.object(forInfoDictionaryKey: "API_KEY") as? String else {
+            print("Failed to get api key")
+            return false
+        }
+        print("Google Maps API Key: \(apiKey)")
+        GMSServices.provideAPIKey(apiKey)
+        
         return true
     }
 }
