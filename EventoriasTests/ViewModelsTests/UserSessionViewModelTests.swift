@@ -2,379 +2,240 @@
 //  UserSessionViewModelTests.swift
 //  EventoriasTests
 //
-//  Created by Thibault Giraudon on 18/07/2025.
+//  Created by Thibault Giraudon on 09/08/2025.
 //
 
 import XCTest
+import SwiftUI
 @testable import Eventorias
-import FirebaseAuth
 
+@MainActor
 final class UserSessionViewModelTests: XCTestCase {
     
-    func testUserShouldSucceed() {
-        let user = User()
-        
-        XCTAssertEqual(user.email, "")
-        XCTAssertEqual(user.fullname, "")
-        XCTAssertEqual(user.imageURL, user.defaultImage)
-    }
-    
-    @MainActor
     func testLoadUserShouldSucceed() async {
-        let authRepositoryFake = AuthenticationRepositoryFake()
-        let userRepositoryFake = UserRepositoryFake()
-        userRepositoryFake.user = User(uid: "123", email: "charles.leclerc@ferrari.mc", fullname: "Charles Leclerc", imageURL: nil)
-        let session = UserSessionViewModel(userRepository: userRepositoryFake, authRepository: authRepositoryFake)
+        let userRepoFake = UserRepositoryFake()
+        userRepoFake.user = FakeData().user
+        let eventsRepoFake = EventsRepositoryFake()
+        eventsRepoFake.events = FakeData().events
+        
+        let session = UserSessionViewModel(userRepository: userRepoFake, eventsRepository: eventsRepoFake)
         
         await session.loadUser(by: "123")
         
-        guard let user = session.currentUser else {
-            XCTFail("Current User should not be nil")
-            return
-        }
-        
-        XCTAssertEqual(user.fullname, "Charles Leclerc")
         XCTAssertTrue(session.isLoggedIn)
+        XCTAssertEqual(session.currentUser?.fullname, "Charles Leclerc")
+        XCTAssertEqual(session.createdEvents.count, 2)
+        XCTAssertEqual(session.subscribedEvents.count, 4)
     }
-
-    @MainActor
-    func testLoadUserShouldFailedWithError() async {
-        let authRepositoryFake = AuthenticationRepositoryFake()
-        let userRepositoryFake = UserRepositoryFake()
-        userRepositoryFake.error = URLError(.badURL)
-        userRepositoryFake.user = User(uid: "123", email: "charles.leclerc@ferrari.mc", fullname: "Charles Leclerc", imageURL: nil)
-        let session = UserSessionViewModel(userRepository: userRepositoryFake, authRepository: authRepositoryFake)
+    
+    func testLoadUserShouldFailedWithErrorInUserRepo() async {
+        let userRepoFake = UserRepositoryFake()
+        userRepoFake.error = FakeData().error
+        let eventsRepoFake = EventsRepositoryFake()
+        eventsRepoFake.events = FakeData().events
+        
+        let session = UserSessionViewModel(userRepository: userRepoFake, eventsRepository: eventsRepoFake)
         
         await session.loadUser(by: "123")
         
-        XCTAssertNil(session.currentUser)
         XCTAssertFalse(session.isLoggedIn)
+        XCTAssertNil(session.currentUser)
         XCTAssertEqual(session.error, "retreiving personnal information")
     }
     
-    @MainActor
-    func testLoadUserShouldFailedWithUserNotFound() async {
-        let authRepositoryFake = AuthenticationRepositoryFake()
-        let userRepositoryFake = UserRepositoryFake()
-        let session = UserSessionViewModel(userRepository: userRepositoryFake, authRepository: authRepositoryFake)
+    func testLoadUserShouldFailedWithErrorInEventsRepo() async {
+        let userRepoFake = UserRepositoryFake()
+        userRepoFake.user = FakeData().user
+        let eventsRepoFake = EventsRepositoryFake()
+        eventsRepoFake.error = FakeData().error
+        
+        let session = UserSessionViewModel(userRepository: userRepoFake, eventsRepository: eventsRepoFake)
         
         await session.loadUser(by: "123")
         
-        XCTAssertNil(session.currentUser)
         XCTAssertFalse(session.isLoggedIn)
+        XCTAssertNil(session.currentUser)
         XCTAssertEqual(session.error, "retreiving personnal information")
     }
     
-    @MainActor
+    func testLoadUserShouldFailedWithNoUser() async {
+        let userRepoFake = UserRepositoryFake()
+        let eventsRepoFake = EventsRepositoryFake()
+        
+        let session = UserSessionViewModel(userRepository: userRepoFake, eventsRepository: eventsRepoFake)
+        
+        await session.loadUser(by: "123")
+        
+        XCTAssertFalse(session.isLoggedIn)
+        XCTAssertNil(session.currentUser)
+        XCTAssertEqual(session.error, "retreiving personnal information")
+    }
+    
     func testUpdateUserShouldSucceed() async {
-        let authRepositoryFake = AuthenticationRepositoryFake()
-        let userRepositoryFake = UserRepositoryFake()
-        userRepositoryFake.user = User(uid: "123", email: "charles.leclerc@ferrari.mc", fullname: "Charles Leclerc", imageURL: nil)
-        let session = UserSessionViewModel(userRepository: userRepositoryFake, authRepository: authRepositoryFake)
+        let userRepoFake = UserRepositoryFake()
+        let authRepoFake = AuthenticationRepositoryFake()
         
-        await session.loadUser(by: "123")
+        let session = UserSessionViewModel(userRepository: userRepoFake, authRepository: authRepoFake)
+        session.currentUser = FakeData().user
+        
         await session.updateUser(email: "pierre.gasly@alpine.fr", fullname: "Pierre Gasly")
         
-        guard let user = session.currentUser else {
-            XCTFail("Current user should not be nil")
-            return
-        }
-        XCTAssertEqual(user.fullname, "Pierre Gasly")
+        XCTAssertEqual(session.currentUser?.email, "pierre.gasly@alpine.fr")
+        XCTAssertEqual(session.currentUser?.fullname, "Pierre Gasly")
     }
     
-    @MainActor
-    func testUpdateUserShouldFailedWithNotLoggedIn() async {
-        let authRepositoryFake = AuthenticationRepositoryFake()
-        let userRepositoryFake = UserRepositoryFake()
-        let session = UserSessionViewModel(userRepository: userRepositoryFake, authRepository: authRepositoryFake)
+    func testUpdateUserShouldFailedWithUserNotLogged() async {
+        let userRepoFake = UserRepositoryFake()
+        let authRepoFake = AuthenticationRepositoryFake()
+        
+        let session = UserSessionViewModel(userRepository: userRepoFake, authRepository: authRepoFake)
         
         await session.updateUser(email: "pierre.gasly@alpine.fr", fullname: "Pierre Gasly")
         
         XCTAssertEqual(session.error, "User not logged in")
     }
     
-    @MainActor
     func testUpdateUserShouldFailedWithError() async {
-        let authRepositoryFake = AuthenticationRepositoryFake()
-        authRepositoryFake.error = URLError(.badURL)
-        let userRepositoryFake = UserRepositoryFake()
+        let userRepoFake = UserRepositoryFake()
+        let authRepoFake = AuthenticationRepositoryFake()
+        authRepoFake.error = FakeData().error
         
-        let session = UserSessionViewModel(userRepository: userRepositoryFake, authRepository: authRepositoryFake)
-        
-        session.currentUser = User(uid: "123", email: "charles.leclerc@ferrari.mc", fullname: "Charles Leclerc", imageURL: nil)
+        let session = UserSessionViewModel(userRepository: userRepoFake, authRepository: authRepoFake)
+        session.currentUser = FakeData().user
         
         await session.updateUser(email: "pierre.gasly@alpine.fr", fullname: "Pierre Gasly")
         
         XCTAssertEqual(session.error, "updating user's personnal information")
     }
     
-    @MainActor
     func testUploadImageShouldSucceed() async {
-        guard let image = loadImage(named: "charles-leclerc.jpg") else {
-            XCTFail("Failed to load image")
-            return
-        }
+        let storageRepoFake = StorageRepositoryFake()
+        storageRepoFake.imageURL = FakeData().imageURL
+        let userRepoFake = UserRepositoryFake()
         
-        let authRepositoryFake = AuthenticationRepositoryFake()
-        let userRepositoryFake = UserRepositoryFake()
-        userRepositoryFake.user = User(uid: "123", email: "charles.leclerc@ferrari.mc", fullname: "Charles Leclerc", imageURL: nil)
-        let session = UserSessionViewModel(userRepository: userRepositoryFake, authRepository: authRepositoryFake)
+        let session = UserSessionViewModel(userRepository: userRepoFake, storageRepository: storageRepoFake)
+        session.currentUser = FakeData().user
+        session.currentUser?.imageURL = "https://newtest.fr"
         
-        do {
-            try await Auth.auth().createUser(withEmail: "testUserVM@test.app", password: "123456")
-        } catch {
-            XCTFail("Failed to create user")
-        }
-        
-        await session.loadUser(by: "123")
-        await session.uploadImage(image)
-        XCTAssertNotEqual(session.currentUser?.imageURL, userRepositoryFake.user?.imageURL)
-        await session.uploadImage(image)
+        await session.uploadImage(UIImage())
+        XCTAssertEqual(session.currentUser?.imageURL, FakeData().imageURL)
     }
     
-    @MainActor
     func testUploadImageShouldFailedWithError() async {
-        let authRepositoryFake = AuthenticationRepositoryFake()
-        let userRepositoryFake = UserRepositoryFake()
-        userRepositoryFake.user = User(uid: "123", email: "charles.leclerc@ferrari.mc", fullname: "Charles Leclerc", imageURL: nil)
-        let session = UserSessionViewModel(userRepository: userRepositoryFake, authRepository: authRepositoryFake)
+        let userRepoFake = UserRepositoryFake()
+        let storageRepoFake = StorageRepositoryFake()
+        storageRepoFake.error = FakeData().error
         
-        let image = UIImage()
+        let session = UserSessionViewModel(userRepository: userRepoFake, storageRepository: storageRepoFake)
+        session.currentUser = FakeData().user
         
-        await session.loadUser(by: "123")
-        await session.uploadImage(image)
-        XCTAssertEqual(session.currentUser?.imageURL, userRepositoryFake.user?.imageURL)
+        await session.uploadImage(UIImage())
+        
         XCTAssertEqual(session.error, "uploading new user's profile picture")
     }
     
-    @MainActor
     func testUploadImageShouldFailedWithUserNotLogged() async {
-        let authRepositoryFake = AuthenticationRepositoryFake()
-        let userRepositoryFake = UserRepositoryFake()
-        let session = UserSessionViewModel(userRepository: userRepositoryFake, authRepository: authRepositoryFake)
+        let userRepoFake = UserRepositoryFake()
+        let storageRepoFake = StorageRepositoryFake()
         
-        let image = UIImage()
+        let session = UserSessionViewModel(userRepository: userRepoFake, storageRepository: storageRepoFake)
         
-        await session.uploadImage(image)
-        XCTAssertEqual(session.currentUser?.imageURL, userRepositoryFake.user?.imageURL)
+        await session.uploadImage(UIImage())
+        
         XCTAssertEqual(session.error, "User not logged in")
     }
     
-    @MainActor
-    func testLogout() async {
-        let authRepositoryFake = AuthenticationRepositoryFake()
-        let userRepositoryFake = UserRepositoryFake()
-        userRepositoryFake.user = User(uid: "123", email: "charles.leclerc@ferrari.mc", fullname: "Charles Leclerc", imageURL: nil)
-        let session = UserSessionViewModel(userRepository: userRepositoryFake, authRepository: authRepositoryFake)
+    func testAddEventShouldSucceed() async {
+        let userRepoFake = UserRepositoryFake()
+        let eventsRepoFake = EventsRepositoryFake()
         
-        await session.loadUser(by: "123")
+        let session = UserSessionViewModel(userRepository: userRepoFake, eventsRepository: eventsRepoFake)
+        session.currentUser = FakeData().user
         
-        guard let user = session.currentUser else {
-            XCTFail("Current User should not be nil")
+        await session.addEvent(FakeData().createdEvent, to: .created)
+        await session.addEvent(FakeData().subscribedEvent, to: .subscribed)
+        
+        guard let createdEvent = session.currentUser?.createdEvents.first else {
+            XCTFail("Failed to get first created event")
+            return
+        }
+        guard let subscribedEvent = session.currentUser?.subscribedEvents.first else {
+            XCTFail("Failed to get first created event")
             return
         }
         
-        XCTAssertEqual(user.fullname, "Charles Leclerc")
-        XCTAssertTrue(session.isLoggedIn)
-        
-        session.logout()
-        
-        XCTAssertNil(session.currentUser)
-        XCTAssertFalse(session.isLoggedIn)
+        XCTAssertEqual(createdEvent, FakeData().createdEvent.id)
+        XCTAssertEqual(subscribedEvent, FakeData().subscribedEvent.id)
     }
     
-    @MainActor
-    func testAddEventShouldFailedUserNotLogged() async {
-        let session = UserSessionViewModel()
+    func testAddEventShouldFailedWithUserNotLogged() async {
+        let userRepoFake = UserRepositoryFake()
+        let eventsRepoFake = EventsRepositoryFake()
         
-        let event = Event(
-            title: "",
-            descrition: "",
-            date: .now,
-            hour: .now,
-            imageURL: "",
-            address: "",
-            location: .init(latitude: 0, longitude: 0),
-            creatorID: ""
-        )
+        let session = UserSessionViewModel(userRepository: userRepoFake, eventsRepository: eventsRepoFake)
         
-        await session.addEvent(event, to: .created)
+        await session.addEvent(FakeData().createdEvent, to: .created)
         
         XCTAssertEqual(session.error, "User not logged in")
     }
     
-    @MainActor
-    func testaddEventShouldFailedWithError() async {
-        let eventsRepositoryFake = EventsRepositoryFake()
-        eventsRepositoryFake.error = URLError(.badURL)
-        let session = UserSessionViewModel(eventsRepository: eventsRepositoryFake)
-        session.currentUser = User()
-
-        let event = Event(
-            title: "",
-            descrition: "",
-            date: .now,
-            hour: .now,
-            imageURL: "",
-            address: "",
-            location: .init(latitude: 0, longitude: 0),
-            creatorID: ""
-        )
+    func testAddEventShouldFailedWithError() async {
+        let userRepoFake = UserRepositoryFake()
+        let eventsRepoFake = EventsRepositoryFake()
+        eventsRepoFake.error = FakeData().error
         
-        await session.addEvent(event, to: .created)
+        let session = UserSessionViewModel(userRepository: userRepoFake, eventsRepository: eventsRepoFake)
+        session.currentUser = FakeData().user
+        
+        await session.addEvent(FakeData().createdEvent, to: .created)
         
         XCTAssertEqual(session.error, "subscribing to the event")
     }
     
-    @MainActor
-    func testRemoveEventShouldFailedWithUserNotLogged() async {
-        let session = UserSessionViewModel()
-
-        let event = Event(
-            title: "",
-            descrition: "",
-            date: .now,
-            hour: .now,
-            imageURL: "",
-            address: "",
-            location: .init(latitude: 0, longitude: 0),
-            creatorID: ""
-        )
+    func testRemoveEventShouldSucceed() async {
+        let userRepoFake = UserRepositoryFake()
+        let eventsRepoFake = EventsRepositoryFake()
         
-        await session.removeEvent(event)
+        let session = UserSessionViewModel(userRepository: userRepoFake, eventsRepository: eventsRepoFake)
+        session.currentUser = FakeData().user
+        session.currentUser?.subscribedEvents = [FakeData().subscribedEvent.id]
         
-        XCTAssertEqual(session.error, "User not logged in")
+        await session.removeEvent(FakeData().subscribedEvent)
+        
+        XCTAssertEqual(session.currentUser?.subscribedEvents, [])
     }
     
-    @MainActor
     func testRemoveEventShouldFailedWithError() async {
-        let eventsRepositoryFake = EventsRepositoryFake()
-        eventsRepositoryFake.error = URLError(.badURL)
-        let session = UserSessionViewModel(eventsRepository: eventsRepositoryFake)
-        session.currentUser = User()
-
-        let event = Event(
-            title: "",
-            descrition: "",
-            date: .now,
-            hour: .now,
-            imageURL: "",
-            address: "",
-            location: .init(latitude: 0, longitude: 0),
-            creatorID: ""
-        )
-
-        session.currentUser?.subscribedEvents.append(event.id)
-        await session.removeEvent(event)
+        let userRepoFake = UserRepositoryFake()
+        let eventsRepoFake = EventsRepositoryFake()
+        eventsRepoFake.error = FakeData().error
+        
+        let session = UserSessionViewModel(userRepository: userRepoFake, eventsRepository: eventsRepoFake)
+        session.currentUser = FakeData().user
+        session.currentUser?.subscribedEvents = [FakeData().subscribedEvent.id]
+        
+        await session.removeEvent(FakeData().subscribedEvent)
         
         XCTAssertEqual(session.error, "unsubscribing to the event")
     }
     
-    @MainActor
-    func testEventsWithLoggedUser() {
-        var events: [Event] = []
+    func testRemoveEventShouldFailedWithUserNotLogged() async {
+        let userRepoFake = UserRepositoryFake()
+        let eventsRepoFake = EventsRepositoryFake()
+        eventsRepoFake.error = FakeData().error
         
-        let createdEvent1 = Event(
-            id: "2003",
-            title: "",
-            descrition: "",
-            date: .now,
-            hour: .now,
-            imageURL: "",
-            address: "",
-            location: .init(latitude: 0, longitude: 0),
-            creatorID: "678"
-        )
-        let createdEvent2 = Event(
-            id: "2004",
-            title: "",
-            descrition: "",
-            date: .now + 86400,
-            hour: .now,
-            imageURL: "",
-            address: "",
-            location: .init(latitude: 0, longitude: 0),
-            creatorID: "678"
-        )
-        let subscribedEvent1 = Event(
-            id: "2005",
-            title: "",
-            descrition: "",
-            date: .now + 86400,
-            hour: .now,
-            imageURL: "",
-            address: "",
-            location: .init(latitude: 0, longitude: 0),
-            creatorID: "789",
-            participants: ["678"]
-        )
-        let subscribedEvent2 = Event(
-            id: "2006",
-            title: "",
-            descrition: "",
-            date: .now,
-            hour: .now,
-            imageURL: "",
-            address: "",
-            location: .init(latitude: 0, longitude: 0),
-            creatorID: "789",
-            participants: ["678"]
-        )
-        events.append(createdEvent1)
-        events.append(createdEvent2)
-        events.append(subscribedEvent1)
-        events.append(subscribedEvent2)
+        let session = UserSessionViewModel(userRepository: userRepoFake, eventsRepository: eventsRepoFake)
         
-        let session = UserSessionViewModel(events: events)
-        session.currentUser = User(uid: "678", email: "", fullname: "", imageURL: nil)
+        await session.removeEvent(FakeData().subscribedEvent)
         
-        XCTAssertEqual(session.createdEvents, [createdEvent2, createdEvent1])
-        XCTAssertEqual(session.subscribedEvents, [subscribedEvent1, subscribedEvent2])
+        XCTAssertEqual(session.error, "User not logged in")
     }
     
-    @MainActor
-    func testEventsWithOutLoggedUser() {
-        var events: [Event] = []
+    func testLogOut() {
+        let session = UserSessionViewModel()
+        session.logout()
         
-        let createdEvent1 = Event(
-            id: "2003",
-            title: "",
-            descrition: "",
-            date: .now,
-            hour: .now,
-            imageURL: "",
-            address: "",
-            location: .init(latitude: 0, longitude: 0),
-            creatorID: "678"
-        )
-        let subscribedEvent1 = Event(
-            id: "2004",
-            title: "",
-            descrition: "",
-            date: .now,
-            hour: .now,
-            imageURL: "",
-            address: "",
-            location: .init(latitude: 0, longitude: 0),
-            creatorID: "789",
-            participants: ["678"]
-        )
-        events.append(createdEvent1)
-        events.append(subscribedEvent1)
-        
-        let session = UserSessionViewModel(events: events)
-        
-        XCTAssertEqual(session.createdEvents, [])
-        XCTAssertEqual(session.subscribedEvents, [])
-    }
-    
-    func loadImage(named name: String) -> UIImage? {
-        let bundle = Bundle(for: type(of: self))
-        guard let url = bundle.url(forResource: name, withExtension: nil),
-              let data = try? Data(contentsOf: url),
-              let image = UIImage(data: data) else {
-            return nil
-        }
-        return image
+        XCTAssertNil(session.currentUser)
+        XCTAssertFalse(session.isLoggedIn)
     }
 }

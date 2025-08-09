@@ -42,7 +42,7 @@ class UserSessionViewModel: ObservableObject {
     
     private let userRepository: UserRepositoryInterface
     private let authRepository: AuthRepositoryInterface
-    private let storageRepository: StorageRepository
+    private let storageRepository: StorageRepositoryInterface
     private let eventsRepository: EventsRepositoryInterface
 
     // MARK: - Initializer
@@ -54,7 +54,7 @@ class UserSessionViewModel: ObservableObject {
     ///   - authRepository: The authentication repository (default is `AuthRepository()`).
     init(userRepository: UserRepositoryInterface = UserRepository(),
          authRepository: AuthRepositoryInterface = AuthRepository(),
-         storageRepository: StorageRepository = StorageRepository(),
+         storageRepository: StorageRepositoryInterface = StorageRepository(),
          eventsRepository: EventsRepositoryInterface = EventsRepository(),
          events: [Event] = []) {
         self.userRepository = userRepository

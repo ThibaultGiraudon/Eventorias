@@ -10,7 +10,7 @@ import FirebaseStorage
 import SwiftUI
 
 /// A repository class that handles all storage-related operations using Firebase Storage.
-class StorageRepository {
+class StorageRepository: StorageRepositoryInterface {
     let storage: Storage
     let ref: StorageReference
     
