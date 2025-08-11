@@ -14,7 +14,6 @@ class CLGeocoderFake: CLGeocoderInterface {
     var error: Error?
     
     func geocodeAddressString(_ address: String) async throws -> [CLPlacemark] {
-        print("I'm using fake")
         if let error = error {
             throw error
         }

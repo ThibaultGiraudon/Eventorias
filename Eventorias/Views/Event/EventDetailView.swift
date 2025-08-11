@@ -65,27 +65,6 @@ struct EventDetailView: View {
                         }
                 }
                 
-//                KFImage(URL(string: event.imageURL))
-//                    .resizable()
-//                    .aspectRatio(contentMode: .fit)
-//                    .clipShape(RoundedRectangle(cornerRadius: 12))
-//                    .padding(.bottom, 22)
-//                    .accessibilityElement()
-//                    .accessibilityLabel("Event's image")
-//                    .overlay(alignment: .topTrailing) {
-//                        ShareLink(item: "\(event.title), \(event.date.toString(format: "MM/dd/yyyy"))\nHope you can come!") {
-//                            Image("share")
-//                                .padding(10)
-//                                .background {
-//                                    Circle()
-//                                        .fill(.ultraThinMaterial)
-//                                }
-//                                .padding(10)
-//                        }
-//                        .accessibilityElement()
-//                        .accessibilityLabel("Share button")
-//                        .accessibilityHint("Double-tap to share event")
-//                    }
                 HStack {
                     VStack(alignment: .leading) {
                         HStack {
@@ -104,7 +83,7 @@ struct EventDetailView: View {
                     
                     Spacer()
                     
-                    FBImage(url: URL(string: creator.imageURL)) { image in
+                    AsyncImage(url: URL(string: creator.imageURL)) { image in
                         image
                             .resizable()
                             .aspectRatio(contentMode: .fill)
@@ -113,16 +92,9 @@ struct EventDetailView: View {
                             .clipShape(Circle())
                             .accessibilityElement()
                             .accessibilityLabel("Owner's image")
+                    } placeholder: {
+                        ProgressView()
                     }
-                    
-//                    KFImage(URL(string: creator.imageURL))
-//                        .resizable()
-//                        .aspectRatio(contentMode: .fill)
-//                        .frame(width: 60, height: 60)
-//                        .clipped()
-//                        .clipShape(Circle())
-//                        .accessibilityElement()
-//                        .accessibilityLabel("Owner's image")
                 }
                 
                 Text(event.descrition)

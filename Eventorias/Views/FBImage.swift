@@ -40,8 +40,12 @@ class ImageCacheManager {
 @MainActor
 class ImageLoader: ObservableObject {
     @Published var image: UIImage?
+    @Published var url: URL? {
+        didSet {
+            loadImage()
+        }
+    }
     
-    private var url: URL?
     private var cacheManager = ImageCacheManager.shared
     
     init(url: URL?) {
@@ -51,25 +55,32 @@ class ImageLoader: ObservableObject {
     
     func loadImage() {
         Task {
+            self.image = nil
             guard let url = url else { return }
             do {
                 self.image = try await cacheManager.loadImage(from: url)
             } catch {
-                
+                self.image = nil
             }
         }
     }
 }
 
 struct FBImage<Content: View>: View {
-    @StateObject var loader: ImageLoader
+    @ObservedObject var loader: ImageLoader
     var content: (Image) -> Content
     
     init(url: URL?, content: @escaping (Image) -> Content) {
-        self._loader = StateObject(wrappedValue: ImageLoader(url: url))
+        self.loader = ImageLoader(url: url)
         self.content = content
     }
+    
     var body: some View {
+        contentBody
+    }
+
+    @ViewBuilder
+    private var contentBody: some View {
         if let image = loader.image {
             content(Image(uiImage: image))
         } else {

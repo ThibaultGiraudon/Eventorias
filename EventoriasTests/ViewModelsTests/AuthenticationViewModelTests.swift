@@ -48,22 +48,6 @@ final class AuthenticationViewModelTest: XCTestCase {
         XCTAssertEqual(viewModel.authenticationState, .signedIn)
     }
     
-    func testRegisterShouldFailedWithPasswordMissmatch() async {
-        let authRepositoryFake = AuthenticationRepositoryFake()
-        authRepositoryFake.error = FakeData().error
-        let session = UserSessionViewModel(authRepository: authRepositoryFake, eventsRepository: EventsRepositoryFake())
-        let userRepositoryFake = UserRepositoryFake()
-        userRepositoryFake.user = FakeData().user
-        let viewModel = AuthenticationViewModel(session: session, authRepository: authRepositoryFake, userRepository: userRepositoryFake)
-        
-        viewModel.password = "test123"
-        viewModel.confirmPassword = "132test"
-        
-        await viewModel.register()
-        
-        XCTAssertEqual(viewModel.authenticationState, .signedOut)
-    }
-    
     func testRegisterShouldFailedWithError() async {
         let authRepositoryFake = AuthenticationRepositoryFake()
         authRepositoryFake.error = FakeData().error

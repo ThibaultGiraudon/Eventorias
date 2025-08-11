@@ -127,7 +127,13 @@ struct ProfileView: View {
                             await session.updateUser(email: email, fullname: fullname)
                         }
                     } label: {
-                        Text("Save change")
+                        Group {
+                            if session.isLoading {
+                                ProgressView()
+                            } else {
+                                Text("Save")
+                            }
+                        }
                             .font(.title2)
                             .foregroundStyle(.white)
                             .padding()

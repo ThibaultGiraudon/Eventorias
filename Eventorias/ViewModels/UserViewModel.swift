@@ -101,6 +101,7 @@ class UserSessionViewModel: ObservableObject {
             self.error = "User not logged in"
             return
         }
+        self.isLoading = true
         user.email = email
         user.fullname = fullname
         do {
@@ -110,6 +111,7 @@ class UserSessionViewModel: ObservableObject {
         } catch {
             self.error = "updating user's personnal information"
         }
+        self.isLoading = false
     }
     
     /// Uploads the given image thanks to the StorageRepository.
@@ -121,6 +123,7 @@ class UserSessionViewModel: ObservableObject {
             self.error = "User not logged in"
             return
         }
+        self.isLoading = true
         do {
             let currentImageURL = user.imageURL
             let imageURL = try await storageRepository.uploadImage(image, to: "profils_image")
@@ -132,8 +135,8 @@ class UserSessionViewModel: ObservableObject {
             self.currentUser = user
         } catch {
             self.error = "uploading new user's profile picture"
-            return
         }
+        self.isLoading = false
     }
     
     func addEvent(_ event: Event, to type: EventsType) async {
