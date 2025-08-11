@@ -40,27 +40,52 @@ struct EventDetailView: View {
             .foregroundStyle(.white)
             .padding(.vertical, 24)
             ScrollView(showsIndicators: false) {
-                KFImage(URL(string: event.imageURL))
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-                    .padding(.bottom, 22)
-                    .accessibilityElement()
-                    .accessibilityLabel("Event's image")
-                    .overlay(alignment: .topTrailing) {
-                        ShareLink(item: "\(event.title), \(event.date.toString(format: "MM/dd/yyyy"))\nHope you can come!") {
-                            Image("share")
-                                .padding(10)
-                                .background {
-                                    Circle()
-                                        .fill(.ultraThinMaterial)
-                                }
-                                .padding(10)
-                        }
+                
+                FBImage(url: URL(string: event.imageURL)) { image in
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .padding(.bottom, 22)
                         .accessibilityElement()
-                        .accessibilityLabel("Share button")
-                        .accessibilityHint("Double-tap to share event")
-                    }
+                        .accessibilityLabel("Event's image")
+                        .overlay(alignment: .topTrailing) {
+                            ShareLink(item: "\(event.title), \(event.date.toString(format: "MM/dd/yyyy"))\nHope you can come!") {
+                                Image("share")
+                                    .padding(10)
+                                    .background {
+                                        Circle()
+                                            .fill(.ultraThinMaterial)
+                                    }
+                                    .padding(10)
+                            }
+                            .accessibilityElement()
+                            .accessibilityLabel("Share button")
+                            .accessibilityHint("Double-tap to share event")
+                        }
+                }
+                
+//                KFImage(URL(string: event.imageURL))
+//                    .resizable()
+//                    .aspectRatio(contentMode: .fit)
+//                    .clipShape(RoundedRectangle(cornerRadius: 12))
+//                    .padding(.bottom, 22)
+//                    .accessibilityElement()
+//                    .accessibilityLabel("Event's image")
+//                    .overlay(alignment: .topTrailing) {
+//                        ShareLink(item: "\(event.title), \(event.date.toString(format: "MM/dd/yyyy"))\nHope you can come!") {
+//                            Image("share")
+//                                .padding(10)
+//                                .background {
+//                                    Circle()
+//                                        .fill(.ultraThinMaterial)
+//                                }
+//                                .padding(10)
+//                        }
+//                        .accessibilityElement()
+//                        .accessibilityLabel("Share button")
+//                        .accessibilityHint("Double-tap to share event")
+//                    }
                 HStack {
                     VStack(alignment: .leading) {
                         HStack {
@@ -79,14 +104,25 @@ struct EventDetailView: View {
                     
                     Spacer()
                     
-                    KFImage(URL(string: creator.imageURL))
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: 60, height: 60)
-                        .clipped()
-                        .clipShape(Circle())
-                        .accessibilityElement()
-                        .accessibilityLabel("Owner's image")
+                    FBImage(url: URL(string: creator.imageURL)) { image in
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 60, height: 60)
+                            .clipped()
+                            .clipShape(Circle())
+                            .accessibilityElement()
+                            .accessibilityLabel("Owner's image")
+                    }
+                    
+//                    KFImage(URL(string: creator.imageURL))
+//                        .resizable()
+//                        .aspectRatio(contentMode: .fill)
+//                        .frame(width: 60, height: 60)
+//                        .clipped()
+//                        .clipShape(Circle())
+//                        .accessibilityElement()
+//                        .accessibilityLabel("Owner's image")
                 }
                 
                 Text(event.descrition)
@@ -150,7 +186,7 @@ struct EventDetailView: View {
             descrition: "Join us for an exclusive Art Exhibition showcasing the works of the talented artist Emily Johnson. This exhibition will feature a captivating collection of her contemporary and classical pieces, offering a unique insight into her creative journey. Whether you're an art enthusiast or a casual visitor, you'll have the chance to explore a diverse range of artworks.",
             date: "07/20/2024".toDate() ?? .now,
             hour: "10:00".toHour() ?? .now,
-            imageURL: "https://firebasestorage.googleapis.com/v0/b/eventorias-df464.firebasestorage.app/o/events%2FEvent%20photo.png?alt=media&token=d8aaf643-c971-46f6-b3b2-e92a34f8356c",
+            imageURL: "https://firebasestorage.googleapis.com/v0/b/eventorias-df464.firebasestorage.app/o/events%2FA354ABA9-8FA2-46DE-B53D-4CFFB140DC5A.jpg?alt=media&token=4097459b-bbdc-4168-97ac-46a991ca331d",
             address: "123 Rue de l'Art, Quartier des Galeries, Paris, 75003, France",
             location: .init(latitude: 48.875226, longitude: 2.303139),
             creatorID: "123"), session: UserSessionViewModel())

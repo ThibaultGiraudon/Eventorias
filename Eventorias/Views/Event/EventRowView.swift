@@ -19,15 +19,17 @@ struct EventRowView: View {
     
     var body: some View {
         HStack {
-            KFImage(URL(string: creator.imageURL))
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .frame(width: 40, height: 40)
-                .clipped()
-                .clipShape(Circle())
-                .padding(.leading)
-                .accessibilityElement()
-                .accessibilityLabel("Owner's image")
+            FBImage(url: URL(string: creator.imageURL)) { image in
+                image
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: 40, height: 40)
+                    .clipped()
+                    .clipShape(Circle())
+                    .padding(.leading)
+                    .accessibilityElement()
+                    .accessibilityLabel("Owner's image")
+            }
             VStack(alignment: .leading) {
                 Text(event.title)
                     .font(.title3)
@@ -37,14 +39,16 @@ struct EventRowView: View {
             .accessibilityLabel("Event's information")
             .accessibilityValue("\(event.title) the \(event.date.toString(format: "MMMM dd, yyyy"))")
             Spacer()
-            KFImage(URL(string: event.imageURL))
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .frame(width: 136, height: 80)
-                .clipped()
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-                .accessibilityElement()
-                .accessibilityLabel("Event's image")
+            FBImage(url: URL(string: event.imageURL)) { image in
+                image
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: 136, height: 80)
+                    .clipped()
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .accessibilityElement()
+                    .accessibilityLabel("Event's image")
+            }
         }
         .foregroundStyle(.white)
         .background {

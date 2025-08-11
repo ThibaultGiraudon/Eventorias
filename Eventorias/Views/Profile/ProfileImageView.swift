@@ -17,7 +17,8 @@ struct ProfileImageView: View {
     var body: some View {
         if let user = session.currentUser {
             VStack {
-                    KFImage(URL(string: user.imageURL))
+                FBImage(url: URL(string: user.imageURL)) { image in
+                    image
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 50, height: 100)
@@ -27,6 +28,7 @@ struct ProfileImageView: View {
                         .onTapGesture {
                             showPhotosPicker = true
                         }
+                }
             }
             .photosPicker(isPresented: $showPhotosPicker, selection: $selectedItem, matching: .images)
             .onChange(of: selectedItem) { _, newItem in
