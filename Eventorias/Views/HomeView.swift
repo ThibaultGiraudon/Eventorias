@@ -51,6 +51,7 @@ struct HomeView: View {
                                 selectedTab = tab
                             }
                             .accessibilityElement(children: .ignore)
+                            .accessibilityIdentifier(tab.rawValue)
                             .accessibilityLabel(tab.rawValue)
                             .accessibilityHint(selectedTab == tab ? "" : "Double-tap to open \(tab.rawValue) view")
                         }

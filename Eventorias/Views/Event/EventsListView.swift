@@ -79,11 +79,17 @@ struct EventsListView: View {
                  LoadingView()
             } else {
                 ScrollView(showsIndicators: false) {
-                    ForEach(eventsVM.sortedEvents) { event in
-                        EventRowView(event: event)
-                            .onTapGesture {
-                                coordinator.goToDetailView(for: event)
-                            }
+                    if eventsVM.sortedEvents.isEmpty {
+                        Text("No events yet")
+                            .accessibilityIdentifier("emptyEventsMessage")
+                            .foregroundStyle(.white)
+                    } else {
+                        ForEach(eventsVM.sortedEvents) { event in
+                            EventRowView(event: event)
+                                .onTapGesture {
+                                    coordinator.goToDetailView(for: event)
+                                }
+                        }
                     }
                 }
                 .refreshable {

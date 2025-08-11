@@ -76,10 +76,10 @@ struct AuthenticateMailView: View {
                         .stroke(lineWidth: 2)
                         .fill(Color("CustomRed"))
                 }
-                .accessibilityElement(children: .combine)
-                .accessibilityLabel("Bouton to create an account")
-                .accessibilityHint("Double-tap to display account creation form")
             }
+            .accessibilityIdentifier("createAccountButton")
+            .accessibilityLabel("Bouton to create an account")
+            .accessibilityHint("Double-tap to display account creation form")
             Spacer()
             Spacer()
         }

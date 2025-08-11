@@ -21,6 +21,7 @@ struct CustomTextField: View {
             }
             .foregroundStyle(.white)
             .font(.title3)
+            .accessibilityIdentifier(title)
         }
         .padding(.vertical, 10)
         .padding(.horizontal, 16)

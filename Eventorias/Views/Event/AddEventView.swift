@@ -99,6 +99,7 @@ struct AddEventView: View {
                         .accessibilityElement(children: .ignore)
                 }
             }
+            .accessibilityIdentifier("addScrollView")
             Spacer()
             Button {
                 Task {
