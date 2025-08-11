@@ -58,7 +58,7 @@ final class EventoriasUITests: XCTestCase {
         
         passwordField.tap()
         passwordField.typeText(password)
-        
+                
         app.buttons["Create an account"].tap()
     }
     

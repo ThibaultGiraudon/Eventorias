@@ -31,29 +31,32 @@ struct RegisterView: View {
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(.never)
                 .keyboardType(.emailAddress)
+                .textContentType(.emailAddress)
+                
                 TextField(text: $authVM.fullname) {
                     Text("Fullname")
                         .foregroundStyle(.white.opacity(0.5))
                 }
                 .padding(10)
                 .background(Color("CustomGray"))
+                .textContentType(.name)
+                
                 SecureField(text: $authVM.password) {
                     Text("Password")
                         .foregroundStyle(.white.opacity(0.5))
                 }
                 .padding(10)
                 .background(Color("CustomGray"))
+                .textContentType(.password)
             }
             .padding(.vertical, 5)
             .padding(.horizontal)
             .foregroundStyle(.white)
             Button {
                 Task {
-                    do {
-                        try await authVM.register()
+                    await authVM.register()
+                    if authVM.error == nil {
                         coordinator.resetNavigation()
-                    } catch {
-                        
                     }
                 }
             } label: {

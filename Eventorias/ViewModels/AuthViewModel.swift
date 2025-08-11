@@ -81,7 +81,7 @@ class AuthenticationViewModel: ObservableObject {
     /// saves user data in Firestore, and stores user data in `UserSessionViewModel`.
     ///
     /// - Parameter completion: A closure called upon successful registration.
-    func register() async throws {
+    func register() async {
         self.authenticationState = .signingIn
         self.error = nil
         do {
@@ -95,7 +95,6 @@ class AuthenticationViewModel: ObservableObject {
         } catch {
             self.error = error.localizedDescription
             self.authenticationState = .signedOut
-            throw error
         }
     }
 

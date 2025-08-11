@@ -34,12 +34,14 @@ struct AuthenticateMailView: View {
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(.never)
                 .keyboardType(.emailAddress)
+                .textContentType(.emailAddress)
                 SecureField(text: $authVM.password) {
                     Text("Password")
                         .foregroundStyle(.white.opacity(0.5))
                 }
                 .padding(10)
                 .background(Color("CustomGray"))
+//                .textContentType(.password)
             }
             .padding(.vertical, 5)
             .padding(.horizontal)
