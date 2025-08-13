@@ -8,7 +8,14 @@
 * [Testing](#testing)
 
 ## Description
-Eventorias ....
+Eventorias is a mobile application developed as part of the OpenClassrooms iOS Development program.
+It aims to simplify event management and discovery by allowing users to create, browse, and manage events in an intuitive and interactive way.
+
+The app is designed with a focus on:
+ - User-friendly interfaces: Users can quickly navigate between event lists, calendars, and detailed views.
+ - Personalization: Profiles allow users to manage their information and preferences.
+ - Efficient data management: All Firebase operations (Auth, Firestore, Storage, etc.) are encapsulated in dedicated repositories, which interact with ViewModels to keep the UI decoupled from backend logic.
+ - Robust testing: Eventorias uses unit tests, integration tests, and UI/E2E tests with the Firebase Emulator Suite to ensure reliability and maintainability.
 
 ## Installation
 
