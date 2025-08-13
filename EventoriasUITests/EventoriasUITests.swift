@@ -35,9 +35,16 @@ final class EventoriasUITests: XCTestCase {
 
         addEvent()
         XCTAssertTrue(app.staticTexts["Grand Prix Monaco"].waitForExistence(timeout: 10))
+        
+        goToEvent()
     }
     
     // MARK: - Helpers
+    
+    func goToEvent() {
+        app.staticTexts["Grand Prix Monaco"].tap()
+        XCTAssertTrue(app.staticTexts["Monaco"].waitForExistence(timeout: 5))
+    }
     
     func createAccount(email: String, fullname: String, password: String) {
         app.buttons["Sign in with email"].tap()
