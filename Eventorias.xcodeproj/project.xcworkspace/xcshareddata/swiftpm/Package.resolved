@@ -1,5 +1,5 @@
 {
-  "originHash" : "9964488c91b57f3f31c6e34f49d33416de8c9fa83685b5c057f99e90794b7620",
+  "originHash" : "a7cb8e2839100b004a1d79d47376c06c3a5bfb60a8bf49c416d396242e0ea3b4",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -98,24 +98,6 @@
       "state" : {
         "revision" : "8f10336ab74ed8fa02317d4e956514b81938be12",
         "version" : "10.1.0"
-      }
-    },
-    {
-      "identity" : "ios-places-sdk",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/googlemaps/ios-places-sdk",
-      "state" : {
-        "revision" : "987497b1eb8a7bbce8cb1d86b2c7cd64d0302452",
-        "version" : "10.1.0"
-      }
-    },
-    {
-      "identity" : "kingfisher",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/onevcat/Kingfisher.git",
-      "state" : {
-        "revision" : "2015fda791daa72c8058619545a593bf8c1dd59f",
-        "version" : "8.5.0"
       }
     },
     {

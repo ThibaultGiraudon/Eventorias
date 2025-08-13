@@ -9,15 +9,12 @@
 /* Begin PBXBuildFile section */
 		CEB3FC042E4748FA00284B84 /* GoogleMaps in Frameworks */ = {isa = PBXBuildFile; productRef = CEB3FC032E4748FA00284B84 /* GoogleMaps */; };
 		CEB3FC062E4749CA00284B84 /* Secrets.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = CEB3FC052E4749CA00284B84 /* Secrets.xcconfig */; };
-		CEB3FC0F2E4750AA00284B84 /* GooglePlacesSwift in Frameworks */ = {isa = PBXBuildFile; productRef = CEB3FC0E2E4750AA00284B84 /* GooglePlacesSwift */; };
 		CED4239E2E2905700014D0E6 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = CED4239D2E2905700014D0E6 /* FirebaseAuth */; };
-		CED423A02E2905700014D0E6 /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = CED4239F2E2905700014D0E6 /* FirebaseDatabase */; };
 		CED423A22E2905700014D0E6 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = CED423A12E2905700014D0E6 /* FirebaseFirestore */; };
 		CED423A42E2905700014D0E6 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = CED423A32E2905700014D0E6 /* FirebaseStorage */; };
 		CED423A62E2905F60014D0E6 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CED423A52E2905F60014D0E6 /* GoogleService-Info.plist */; };
 		CED423D42E2930980014D0E6 /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = CED423D12E2930980014D0E6 /* .swiftlint.yml */; };
 		CED423D62E2930980014D0E6 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = CED423D02E2930980014D0E6 /* .gitignore */; };
-		CED4240B2E294E250014D0E6 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = CED4240A2E294E250014D0E6 /* Kingfisher */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -90,13 +87,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CED423A02E2905700014D0E6 /* FirebaseDatabase in Frameworks */,
 				CED423A42E2905700014D0E6 /* FirebaseStorage in Frameworks */,
-				CEB3FC0F2E4750AA00284B84 /* GooglePlacesSwift in Frameworks */,
 				CEB3FC042E4748FA00284B84 /* GoogleMaps in Frameworks */,
 				CED4239E2E2905700014D0E6 /* FirebaseAuth in Frameworks */,
 				CED423A22E2905700014D0E6 /* FirebaseFirestore in Frameworks */,
-				CED4240B2E294E250014D0E6 /* Kingfisher in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -179,12 +173,9 @@
 			name = Eventorias;
 			packageProductDependencies = (
 				CED4239D2E2905700014D0E6 /* FirebaseAuth */,
-				CED4239F2E2905700014D0E6 /* FirebaseDatabase */,
 				CED423A12E2905700014D0E6 /* FirebaseFirestore */,
 				CED423A32E2905700014D0E6 /* FirebaseStorage */,
-				CED4240A2E294E250014D0E6 /* Kingfisher */,
 				CEB3FC032E4748FA00284B84 /* GoogleMaps */,
-				CEB3FC0E2E4750AA00284B84 /* GooglePlacesSwift */,
 			);
 			productName = Eventorias;
 			productReference = CED423612E2903C40014D0E6 /* Eventorias.app */;
@@ -248,9 +239,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				CED4239C2E2905700014D0E6 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
-				CED424092E294E250014D0E6 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				CEB3FC022E4748FA00284B84 /* XCRemoteSwiftPackageReference "ios-maps-sdk" */,
-				CEB3FC0B2E4750AA00284B84 /* XCRemoteSwiftPackageReference "ios-places-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = CED423622E2903C40014D0E6 /* Products */;
@@ -662,28 +651,12 @@
 				minimumVersion = 10.1.0;
 			};
 		};
-		CEB3FC0B2E4750AA00284B84 /* XCRemoteSwiftPackageReference "ios-places-sdk" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/googlemaps/ios-places-sdk";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 10.1.0;
-			};
-		};
 		CED4239C2E2905700014D0E6 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 12.0.0;
-			};
-		};
-		CED424092E294E250014D0E6 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 8.5.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -694,20 +667,10 @@
 			package = CEB3FC022E4748FA00284B84 /* XCRemoteSwiftPackageReference "ios-maps-sdk" */;
 			productName = GoogleMaps;
 		};
-		CEB3FC0E2E4750AA00284B84 /* GooglePlacesSwift */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = CEB3FC0B2E4750AA00284B84 /* XCRemoteSwiftPackageReference "ios-places-sdk" */;
-			productName = GooglePlacesSwift;
-		};
 		CED4239D2E2905700014D0E6 /* FirebaseAuth */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = CED4239C2E2905700014D0E6 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseAuth;
-		};
-		CED4239F2E2905700014D0E6 /* FirebaseDatabase */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = CED4239C2E2905700014D0E6 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseDatabase;
 		};
 		CED423A12E2905700014D0E6 /* FirebaseFirestore */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -718,11 +681,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CED4239C2E2905700014D0E6 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseStorage;
-		};
-		CED4240A2E294E250014D0E6 /* Kingfisher */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = CED424092E294E250014D0E6 /* XCRemoteSwiftPackageReference "Kingfisher" */;
-			productName = Kingfisher;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
