@@ -14,6 +14,8 @@ struct AddEventView: View {
     @State private var showPhotosPicker: Bool = false
     @State private var isCameraPresented: Bool = false
     @State private var selectedItem: PhotosPickerItem?
+    @ScaledMetric var size = 52
+    
     @EnvironmentObject var coordinator: AppCoordinator
     @FocusState private var focused
     var body: some View {
@@ -64,7 +66,7 @@ struct AddEventView: View {
                     Image(systemName: "camera")
                         .foregroundStyle(.black)
                         .padding(16)
-                        .frame(width: 52, height: 52)
+                        .frame(width: size, height: size)
                         .background {
                             RoundedRectangle(cornerRadius: 16)
                                 .fill(.white)
@@ -80,7 +82,7 @@ struct AddEventView: View {
                         .foregroundStyle(.white)
                         .rotationEffect(.degrees(-45))
                         .padding(16)
-                        .frame(width: 52, height: 52)
+                        .frame(width: size, height: size)
                         .background {
                             RoundedRectangle(cornerRadius: 16)
                                 .fill(Color("CustomRed"))

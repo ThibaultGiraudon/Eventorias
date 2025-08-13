@@ -46,6 +46,7 @@ struct YourApp: App {
         WindowGroup {
             ContentView(session: session)
                 .environmentObject(coordinator)
+                .dynamicTypeSize(.xSmall ... .accessibility3)
         }
     }
 }

@@ -86,6 +86,7 @@ struct EventsCalendarView: View {
             Color("background")
                 .ignoresSafeArea()
         }
+        .dynamicTypeSize(.xSmall ... .xxLarge)
     }
     
     func customButton(systemName image: String, completion: @escaping () -> Void) -> some View {

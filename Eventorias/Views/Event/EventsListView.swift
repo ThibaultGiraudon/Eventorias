@@ -9,7 +9,9 @@ import SwiftUI
 
 struct EventsListView: View {
     @MainActor @ObservedObject var eventsVM: EventsViewModel
+    
     @EnvironmentObject var coordinator: AppCoordinator
+    @ScaledMetric var size = 18
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
@@ -111,7 +113,7 @@ struct EventsListView: View {
             } label: {
                 Image(systemName: "plus")
                     .resizable()
-                    .frame(width: 18, height: 18)
+                    .frame(width: size, height: size)
                     .foregroundStyle(.white)
                     .padding()
                     .background {

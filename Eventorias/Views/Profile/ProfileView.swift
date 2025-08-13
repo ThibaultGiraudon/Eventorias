@@ -52,57 +52,6 @@ struct ProfileView: View {
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel("Notification toggle")
                 .accessibilityHint("Double-tap to \(notificationsEnabled ? "disable" : "enable") notifications")
-                HStack {
-                    Text("My events")
-                        .padding(.vertical, 8)
-                        .padding(.horizontal, 16)
-                        .background {
-                            Capsule()
-                                .fill(Color("CustomGray").opacity(selectedEvents == .created ? 1.0 : 0.5))
-                        }
-                        .onTapGesture {
-                            selectedEvents = .created
-                        }
-                        .accessibilityElement(children: .ignore)
-                        .accessibilityLabel("My events button")
-                        .accessibilityHint("Double-tap to show your created events")
-                    
-                    Text("Subsribed events")
-                        .padding(.vertical, 8)
-                        .padding(.horizontal, 16)
-                        .background {
-                            Capsule()
-                                .fill(Color("CustomGray").opacity(selectedEvents == .subscribed ? 1.0 : 0.5))
-                        }
-                        .onTapGesture {
-                            selectedEvents = .subscribed
-                        }
-                        .accessibilityElement(children: .ignore)
-                        .accessibilityLabel("Subscribed events button")
-                        .accessibilityHint("Double-tap to show your subscribed events")
-                }
-                .foregroundStyle(.white)
-                .padding(.top, 22)
-                switch selectedEvents {
-                case .created:
-                    ScrollView(showsIndicators: false) {
-                        ForEach(session.createdEvents) { event in
-                            EventRowView(event: event)
-                                .onTapGesture {
-                                    coordinator.goToDetailView(for: event)
-                                }
-                        }
-                    }
-                case .subscribed:
-                    ScrollView(showsIndicators: false) {
-                        ForEach(session.subscribedEvents) { event in
-                            EventRowView(event: event)
-                                .onTapGesture {
-                                    coordinator.goToDetailView(for: event)
-                                }
-                        }
-                    }
-                }
                 Spacer()
                 HStack {
                     Button {

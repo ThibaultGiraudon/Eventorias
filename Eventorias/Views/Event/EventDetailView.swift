@@ -17,6 +17,7 @@ struct EventDetailView: View {
     @State private var creator: User = .init()
     
     @EnvironmentObject var coordinator: AppCoordinator
+    @Environment(\.dynamicTypeSize) var dynamicTypeSize
     
     init(event: Event, session: UserSessionViewModel) {
         self.event = event
@@ -83,7 +84,7 @@ struct EventDetailView: View {
                     
                     Spacer()
                     
-                    AsyncImage(url: URL(string: creator.imageURL)) { image in
+                    FBImage(url: URL(string: creator.imageURL)) { image in
                         image
                             .resizable()
                             .aspectRatio(contentMode: .fill)
@@ -92,26 +93,33 @@ struct EventDetailView: View {
                             .clipShape(Circle())
                             .accessibilityElement()
                             .accessibilityLabel("Owner's image")
-                    } placeholder: {
-                        ProgressView()
                     }
                 }
                 
                 Text(event.descrition)
                     .padding(.vertical, 22)
                 
-                GeometryReader { proxy in
-                    HStack {
-                        Text(event.address)
-                            .font(.title3)
-                        Spacer()
-                        GoogleMapView(latitude: event.location.latitude, longitude: event.location.longitude)
+                if dynamicTypeSize > .xLarge {
+                    Text(event.address)
+                        .font(.title3)
+                    GoogleMapView(latitude: event.location.latitude, longitude: event.location.longitude)
                         .clipShape(RoundedRectangle(cornerRadius: 12))
-                        .frame(width: proxy.size.width / 2)
+                        .frame(height: 300)
                         .accessibilityHidden(true)
+                } else {
+                    GeometryReader { proxy in
+                        HStack {
+                            Text(event.address)
+                                .font(.title3)
+                            Spacer()
+                            GoogleMapView(latitude: event.location.latitude, longitude: event.location.longitude)
+                                .clipShape(RoundedRectangle(cornerRadius: 12))
+                                .frame(width: proxy.size.width / 2)
+                                .accessibilityHidden(true)
+                        }
                     }
+                    .frame(height: 100)
                 }
-                .frame(height: 100)
                 Button {
                     Task {
                         if eventVM.isSubsribe {

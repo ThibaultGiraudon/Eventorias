@@ -12,23 +12,32 @@ struct EventRowView: View {
     var event: Event
     @StateObject var eventVM: EventViewModel
     @State private var creator: User = .init()
+    
+    @ScaledMetric private var userImageSize = 40
+    @ScaledMetric private var eventImageHeight = 80
+    @ScaledMetric private var eventImageWidth = 136
+    
+    @Environment(\.dynamicTypeSize) var dynamicTypeSize
+    
     init(event: Event) {
         self.event = event
         self._eventVM = StateObject(wrappedValue: EventViewModel(event: event, session: UserSessionViewModel()))
     }
     
     var body: some View {
-        HStack {
-            FBImage(url: URL(string: creator.imageURL)) { image in
-                image
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: 40, height: 40)
-                    .clipped()
-                    .clipShape(Circle())
-                    .padding(.leading)
-                    .accessibilityElement()
-                    .accessibilityLabel("Owner's image")
+        adaptiveStack {
+            if dynamicTypeSize <= .xxLarge {
+                FBImage(url: URL(string: creator.imageURL)) { image in
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: userImageSize, height: userImageSize)
+                        .clipped()
+                        .clipShape(Circle())
+                        .padding(.leading)
+                        .accessibilityElement()
+                        .accessibilityLabel("Owner's image")
+                }
             }
             VStack(alignment: .leading) {
                 Text(event.title)
@@ -43,7 +52,7 @@ struct EventRowView: View {
                 image
                     .resizable()
                     .aspectRatio(contentMode: .fill)
-                    .frame(width: 136, height: 80)
+                    .frame(width: eventImageWidth, height: eventImageHeight)
                     .clipped()
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                     .accessibilityElement()
@@ -59,6 +68,18 @@ struct EventRowView: View {
             creator = await eventVM.getUser(with: event.creatorID)
         }
     }
+    
+    @ViewBuilder
+    func adaptiveStack<Content: View>(@ViewBuilder content: () -> Content) -> some View {
+        if dynamicTypeSize > .xxLarge {
+            VStack { content() }
+                .frame(maxWidth: .infinity)
+        } else {
+            HStack { content() }
+                .multilineTextAlignment(.leading)
+        }
+    }
+    
 }
 
 #Preview {
