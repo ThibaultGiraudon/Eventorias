@@ -64,8 +64,8 @@ struct User: Hashable {
     ///
     /// - Parameter document: A `DocumentSnapshot` from Firestore containing user data.
     /// - Returns: `nil` if the required fields are missing or invalid.
-    init?(document: DocumentSnapshot) {
-        guard let data = document.data(),
+    init?(data: [String: Any]?, uid: String) {
+        guard let data = data,
               let email = data["email"] as? String,
               let fullname = data["fullname"] as? String,
               let createdEvents = data["createdEvents"] as? [String],
@@ -73,7 +73,7 @@ struct User: Hashable {
             return nil
         }
 
-        self.uid = document.documentID
+        self.uid = uid
         self.email = email
         self.fullname = fullname
         self.createdEvents = createdEvents

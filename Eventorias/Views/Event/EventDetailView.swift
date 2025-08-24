@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import Kingfisher
 import MapKit
 
 struct EventDetailView: View {

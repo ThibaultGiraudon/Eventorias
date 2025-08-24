@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import FirebaseAuth
 
 /// A protocol that defines authentication-related operation.
 protocol AuthRepositoryInterface {
