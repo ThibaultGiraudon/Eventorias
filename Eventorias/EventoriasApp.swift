@@ -24,6 +24,9 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             Auth.auth().useEmulator(withHost: "localhost", port: 9000)
             Firestore.firestore().useEmulator(withHost: "localhost", port: 9010)
             Storage.storage().useEmulator(withHost: "localhost", port: 9020)
+            let settings = Firestore.firestore().settings
+            settings.cacheSettings = MemoryCacheSettings()
+            Firestore.firestore().settings = settings
         }
         
         guard let apiKey = Bundle.main.object(forInfoDictionaryKey: "API_KEY") as? String else {

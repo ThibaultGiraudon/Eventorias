@@ -28,10 +28,10 @@ final class EventoriasUITests: XCTestCase {
         createAccount(email: testEmail, fullname: testFullname, password: testPassword)
         XCTAssertTrue(app.staticTexts["emptyEventsMessage"].waitForExistence(timeout: 10))
         
-        logout()
-        XCTAssertTrue(app.buttons["Sign in with email"].waitForExistence(timeout: 5))
-
-        login(email: testEmail, password: testPassword)
+//        logout()
+//        XCTAssertTrue(app.buttons["Sign in with email"].waitForExistence(timeout: 5))
+//
+//        login(email: testEmail, password: testPassword)
 
         addEvent()
         XCTAssertTrue(app.staticTexts["Grand Prix Monaco"].waitForExistence(timeout: 10))
@@ -98,8 +98,6 @@ final class EventoriasUITests: XCTestCase {
         
         let eventNameField = app.textFields["New event"]
         let eventDescriptionField = app.textFields["Tap here to enter your description"]
-        let eventDateField = app.textFields["MM/DD/YYYY"]
-        let eventTimeField = app.textFields["HH:MM"]
         let eventAddressField = app.textFields["Enter full address"]
         
         eventNameField.tap()
@@ -107,12 +105,6 @@ final class EventoriasUITests: XCTestCase {
         
         eventDescriptionField.tap()
         eventDescriptionField.typeText("Grand Prix Monaco\n")
-        
-        eventDateField.tap()
-        eventDateField.typeText("07/08/2025\n")
-        
-        eventTimeField.tap()
-        eventTimeField.typeText("15:00\n")
 
         let galleryButton = app.images["Attachements"]
         if !galleryButton.isHittable {

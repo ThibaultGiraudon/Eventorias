@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 /// A model reprenting an event.
 ///
 /// Include basic information, location, creatorID and participants list.

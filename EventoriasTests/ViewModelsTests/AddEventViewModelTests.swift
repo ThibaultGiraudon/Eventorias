@@ -22,9 +22,9 @@ final class AddEventViewModelTests: XCTestCase {
         XCTAssertTrue(viewModel.shouldDisable)
         viewModel.description = "description"
         XCTAssertTrue(viewModel.shouldDisable)
-        viewModel.date = "08/17/2003"
+        viewModel.date = "08/17/2003".toDate() ?? .now
         XCTAssertTrue(viewModel.shouldDisable)
-        viewModel.hour = "10:00"
+        viewModel.hour = "10:00".toDate() ?? .now
         XCTAssertTrue(viewModel.shouldDisable)
         viewModel.address = "ici"
         XCTAssertTrue(viewModel.shouldDisable)
@@ -45,8 +45,8 @@ final class AddEventViewModelTests: XCTestCase {
         
         viewModel.title = "uniquetitle"
         viewModel.description = "description"
-        viewModel.date = "08/17/2003"
-        viewModel.hour = "10:00"
+        viewModel.date = "08/17/2003".toDate() ?? .now
+        viewModel.hour = "10:00".toDate() ?? .now
         viewModel.address = "ici"
         viewModel.uiImage = loadImage(named: "charles-leclerc.jpg")
         viewModel.location = Location(coordinate: .init(latitude: 0, longitude: 0))
@@ -56,42 +56,6 @@ final class AddEventViewModelTests: XCTestCase {
         XCTAssertNil(viewModel.session.error)
     }
     
-    func testAddEventShouldFailedWithBadDateFormat() async {
-        let session = UserSessionViewModel()
-        session.currentUser = FakeData().user
-        let viewModel = AddEventViewModel(session: session, geocoder: CLGeocoderFake())
-        
-        viewModel.title = "title"
-        viewModel.description = "description"
-        viewModel.date = "test"
-        viewModel.hour = "test"
-        viewModel.address = "ici"
-        viewModel.uiImage = loadImage(named: "charles-leclerc.jpg")
-        viewModel.location = Location(coordinate: .init(latitude: 0, longitude: 0))
-        
-        await viewModel.addEvent()
-        
-        XCTAssertEqual(viewModel.error, "Bad date format (should be MM/DD/YYYY).")
-    }
-    
-    func testAddEventShouldFailedWithBadHourFormat() async {
-        let session = UserSessionViewModel()
-        session.currentUser = FakeData().user
-        let viewModel = AddEventViewModel(session: session, geocoder: CLGeocoderFake())
-        
-        viewModel.title = "title"
-        viewModel.description = "description"
-        viewModel.date = "08/17/2003"
-        viewModel.hour = "test"
-        viewModel.address = "ici"
-        viewModel.uiImage = loadImage(named: "charles-leclerc.jpg")
-        viewModel.location = Location(coordinate: .init(latitude: 0, longitude: 0))
-        
-        await viewModel.addEvent()
-        
-        XCTAssertEqual(viewModel.error, "Bad hour format (should be HH:MM).")
-    }
-    
     func testAddEventShouldFailedWithNoCoordinate() async {
         let session = UserSessionViewModel()
         session.currentUser = FakeData().user
@@ -99,8 +63,8 @@ final class AddEventViewModelTests: XCTestCase {
         
         viewModel.title = "title"
         viewModel.description = "description"
-        viewModel.date = "08/17/2003"
-        viewModel.hour = "10:00"
+        viewModel.date = "08/17/2003".toDate() ?? .now
+        viewModel.hour = "10:00".toDate() ?? .now
         viewModel.address = "ici"
         viewModel.uiImage = loadImage(named: "charles-leclerc.jpg")
         
@@ -116,8 +80,8 @@ final class AddEventViewModelTests: XCTestCase {
         
         viewModel.title = "title"
         viewModel.description = "description"
-        viewModel.date = "08/17/2003"
-        viewModel.hour = "10:00"
+        viewModel.date = "08/17/2003".toDate() ?? .now
+        viewModel.hour = "10:00".toDate() ?? .now
         viewModel.address = "123 Rue de l'Art, Quartier des Galeries, Paris, 75003, France"
         viewModel.location = Location(coordinate: .init(latitude: 0, longitude: 0))
         
@@ -132,8 +96,8 @@ final class AddEventViewModelTests: XCTestCase {
         
         viewModel.title = "title"
         viewModel.description = "description"
-        viewModel.date = "08/17/2003"
-        viewModel.hour = "10:00"
+        viewModel.date = "08/17/2003".toDate() ?? .now
+        viewModel.hour = "10:00".toDate() ?? .now
         viewModel.address = "ici"
         viewModel.uiImage = loadImage(named: "charles-leclerc.jpg")
         viewModel.location = Location(coordinate: .init(latitude: 0, longitude: 0))
@@ -150,8 +114,8 @@ final class AddEventViewModelTests: XCTestCase {
         
         viewModel.title = "title"
         viewModel.description = "description"
-        viewModel.date = "08/17/2003"
-        viewModel.hour = "10:00"
+        viewModel.date = "08/17/2003".toDate() ?? .now
+        viewModel.hour = "10:00".toDate() ?? .now
         viewModel.address = "ici"
         viewModel.location = Location(coordinate: .init(latitude: 0, longitude: 0))
         viewModel.uiImage = UIImage()

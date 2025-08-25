@@ -27,8 +27,8 @@ class AddEventViewModel: ObservableObject {
     @Published var error: String?
     @Published var title: String = ""
     @Published var description: String = ""
-    @Published var date: String = ""
-    @Published var hour: String = ""
+    @Published var date: Date = .now
+    @Published var hour: Date = .now
     @Published var address: String = ""
     @Published var uiImage: UIImage?
     @Published var location: Location?
@@ -39,7 +39,7 @@ class AddEventViewModel: ObservableObject {
     )
     
     var shouldDisable: Bool {
-        title.isEmpty || description.isEmpty || date.isEmpty || hour.isEmpty || address.isEmpty || uiImage == nil || isLoading
+        title.isEmpty || description.isEmpty || address.isEmpty || uiImage == nil || isLoading
     }
 
     private let eventRepository: EventsRepositoryInterface
@@ -62,17 +62,6 @@ class AddEventViewModel: ObservableObject {
         isLoading = true
         self.session.error = nil
         self.error = nil
-        guard let date = self.date.toDate() else {
-            self.error = "Bad date format (should be MM/DD/YYYY)."
-            isLoading = false
-            return
-        }
-        
-        guard let hour = self.hour.toHour() else {
-            self.error = "Bad hour format (should be HH:MM)."
-            isLoading = false
-            return
-        }
                 
         guard let coordinate = location?.coordinate else {
             self.error = "Failed to get address."
@@ -111,8 +100,6 @@ class AddEventViewModel: ObservableObject {
         }
         self.location = nil
         self.title = ""
-        self.date = ""
-        self.hour = ""
         self.description = ""
         self.address = ""
         self.uiImage = nil

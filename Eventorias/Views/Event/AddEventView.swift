@@ -40,8 +40,8 @@ struct AddEventView: View {
                     CustomTextField(title: "Title", label: "New event", text: $viewModel.title)
                     CustomTextField(title: "Description", label: "Tap here to enter your description", text: $viewModel.description)
                     HStack(spacing: 16) {
-                        CustomTextField(title: "Date", label: "MM/DD/YYYY", text: $viewModel.date)
-                        CustomTextField(title: "Time", label: "HH:MM", text: $viewModel.hour)
+                        datePickerLabel(title: "Date", label: "MM/DD/YYYY", value: $viewModel.date, components: .date)
+                        datePickerLabel(title: "Hour", label: "HH : MM", value: $viewModel.hour, components: .hourAndMinute)
                     }
                     CustomTextField(title: "Address", label: "Enter full address", text: $viewModel.address)
                         .focused($focused)
@@ -103,36 +103,7 @@ struct AddEventView: View {
             }
             .accessibilityIdentifier("addScrollView")
             Spacer()
-            Button {
-                Task {
-                    await viewModel.addEvent()
-                    if viewModel.error == nil {
-                        UIAccessibility.post(notification: .announcement, argument: "Successfuly added new event")
-                        coordinator.dismiss()
-                    }
-                }
-            } label: {
-                Group {
-                    if viewModel.isLoading {
-                        ProgressView()
-                    } else {
-                        Text("Validate")
-                    }
-                }
-                    .font(.title3)
-                    .foregroundStyle(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background {
-                        RoundedRectangle(cornerRadius: 4)
-                            .fill(Color("CustomRed").opacity(viewModel.shouldDisable ? 0.6 : 1.0))
-                    }
-                    .padding()
-            }
-            .disabled(viewModel.shouldDisable)
-            .accessibilityElement(children: .ignore)
-            .accessibilityLabel("Validate button")
-            .accessibilityHint(viewModel.shouldDisable ? "Button disable, fill out all the fields" : "Double-tap to sign in")
+            AddEventButtonView(viewModel: viewModel)
         }
         .overlay(alignment: .bottom, content: {
             if let error = viewModel.error {
@@ -163,6 +134,35 @@ struct AddEventView: View {
         }
         .toolbarVisibility(.hidden)
         .navigationBarBackButtonHidden()
+    }
+    
+    @ViewBuilder
+    func datePickerLabel(title: String, label: String, value: Binding<Date>, components: DatePickerComponents) -> some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 0) {
+                Text(title)
+                    .foregroundStyle(.gray)
+                DatePicker(selection: value, displayedComponents: components) {
+                    Text(title)
+                }
+                .labelsHidden()
+                .colorScheme(.dark)
+                .tint(.red)
+                .font(.title3)
+                .accessibilityIdentifier(title)
+            }
+            Spacer()
+        }
+        .padding(.vertical, 10)
+        .padding(.horizontal, 16)
+        .frame(maxWidth: .infinity)
+        .background {
+            RoundedRectangle(cornerRadius: 4)
+                .fill(Color("CustomGray"))
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(title)
+        .accessibilityValue(label)
     }
 }
 
