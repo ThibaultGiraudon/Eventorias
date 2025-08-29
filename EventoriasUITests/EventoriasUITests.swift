@@ -28,10 +28,10 @@ final class EventoriasUITests: XCTestCase {
         createAccount(email: testEmail, fullname: testFullname, password: testPassword)
         XCTAssertTrue(app.staticTexts["emptyEventsMessage"].waitForExistence(timeout: 10))
         
-//        logout()
-//        XCTAssertTrue(app.buttons["Sign in with email"].waitForExistence(timeout: 5))
-//
-//        login(email: testEmail, password: testPassword)
+        logout()
+        XCTAssertTrue(app.buttons["Sign in with email"].waitForExistence(timeout: 5))
+
+        login(email: testEmail, password: testPassword)
 
         addEvent()
         XCTAssertTrue(app.staticTexts["Grand Prix Monaco"].waitForExistence(timeout: 10))

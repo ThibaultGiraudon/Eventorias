@@ -32,6 +32,7 @@ struct EventDetailView: View {
                         coordinator.dismiss()
                     }
                     .accessibilityElement(children: .ignore)
+                    .accessibilityLabel("Go back button")
                     .accessibilityHint("Double-tap to go back")
                 Text(event.title)
                 Spacer()
