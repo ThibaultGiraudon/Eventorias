@@ -19,8 +19,8 @@ struct ProfileImageView: View {
                 FBImage(url: URL(string: user.imageURL)) { image in
                     image
                         .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 50, height: 100)
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 50, height: 50)
                         .clipped()
                         .clipShape(Circle())
                         .id(user.imageURL)
